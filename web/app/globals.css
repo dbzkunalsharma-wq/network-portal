@@ -1,0 +1,177 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/*  DOD US — flat design system                                        */
+/*  Palette: Electric Violet #834DFB · Turbo #F0E100 · Haiti #18102B   */
+/*  · Blue Chalk #F5F3FF. Solid fills, hard edges, no blur, no         */
+/*  gradients, no drop shadows.                                        */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --background: #f5f3ff; /* Blue Chalk */
+  --foreground: #18102b; /* Haiti */
+  --brand: #834dfb; /* Electric Violet */
+  --turbo: #f0e100; /* Turbo */
+  --line: #e3def5; /* card hairline on chalk */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-ink: #18102b;
+  --color-chalk: #f5f3ff;
+  --color-brand: #834dfb;
+  --color-turbo: #f0e100;
+  --color-line: #e3def5;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Flat backdrop: a single solid ground. The bloom elements are kept in the
+   layout for compatibility but render nothing. */
+.dod-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--background);
+}
+.dod-bloom {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Card ("dod-glass" kept as the class name so every surface reskins) */
+/* ------------------------------------------------------------------ */
+
+.dod-glass {
+  position: relative;
+  background-color: #ffffff;
+  border: 1px solid var(--line);
+}
+
+/* Company avatar — flat tinted circle, no inset highlight. */
+.dod-avatar {
+  box-shadow: none;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Top-company treatment — Turbo yellow edge                          */
+/* ------------------------------------------------------------------ */
+
+.dod-top {
+  border-color: var(--turbo);
+  border-width: 2px;
+}
+.dod-top:hover {
+  border-color: var(--ink, #18102b);
+}
+
+.dod-top-badge {
+  background-color: var(--turbo);
+  color: #18102b;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Detail modal                                                       */
+/* ------------------------------------------------------------------ */
+
+@keyframes dod-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes dod-panel-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.dod-modal-overlay {
+  animation: dod-overlay-in 0.16s ease-out both;
+}
+.dod-modal-panel {
+  animation: dod-panel-in 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.dod-modal-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Animations                                                         */
+/* ------------------------------------------------------------------ */
+
+@keyframes dod-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.7); }
+}
+.dod-live-dot {
+  animation: dod-pulse 2s ease-in-out infinite;
+}
+
+@keyframes dod-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.dod-rise {
+  animation: dod-rise 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Skeleton: flat pulsing blocks instead of a sheen sweep. */
+@keyframes dod-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.dod-shimmer {
+  position: relative;
+  overflow: hidden;
+  animation: dod-blink 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .dod-live-dot, .dod-rise, .dod-shimmer, .dod-modal-overlay, .dod-modal-panel {
+    animation: none;
+  }
+  .dod-rise, .dod-modal-panel {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Polish                                                             */
+/* ------------------------------------------------------------------ */
+
+::selection {
+  background: var(--turbo);
+  color: #18102b;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(24, 16, 43, 0.18);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(24, 16, 43, 0.32);
+  background-clip: content-box;
+}

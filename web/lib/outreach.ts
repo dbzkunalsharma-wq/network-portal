@@ -1,0 +1,1000 @@
+import { buildCompanies, companySlug, type CompanySummary } from "./companies";
+import {
+  CITY_ALIASES,
+  DISCIPLINE_MAP,
+  LOCATION_LABELS,
+  LOCATIONS,
+  effectiveTime,
+  guessDomain,
+  locationKey,
+  normalizeCompany,
+  reputationTier,
+} from "./jobs";
+import type { CompanyLedger, Discipline, Job, LedgerEntry } from "./types";
+
+/* ------------------------------------------------------------------ */
+/*  Placement-outreach model (pure, deterministic — no ML, no network) */
+/*                                                                     */
+/*  Turns the flat jobs feed into a COMPANY-LEVEL outreach list for a   */
+/*  job seeker: which US companies hire this profile, how to     */
+/*  reach them (pattern + posted contacts), and a hiring-intent score   */
+/*  so the team can prioritise. Everything here is computed from the    */
+/*  feed at build/request time; there are no runtime calls of any kind. */
+/* ------------------------------------------------------------------ */
+
+export interface CompanyOutreach {
+  /** Same slug as the company directory (links to /companies/[slug]). */
+  slug: string;
+  /** Display name (most-frequent spelling from buildCompanies). */
+  name: string;
+  /** First non-null logo URL across the company's roles (or null). */
+  logo: string | null;
+  /** Best-effort web domain ("acme.com"), or null when undecidable. */
+  domain: string | null;
+  /** Number of live roles in the current feed. */
+  openRoles: number;
+  /**
+   * Number of this company's roles with a real `posted_at` date within the
+   * last 7 days of the build clock (fresh hiring activity). Computed from
+   * `posted_at` ONLY — never `seen_at` (our scrape time) — so it's honest.
+   */
+  freshRoleCount: number;
+  /** `freshRoleCount > 0` — at least one role was posted in the last 7 days. */
+  postedThisWeek: boolean;
+  /** Distinct disciplines this company hires across. */
+  disciplines: Discipline[];
+  /** Distinct non-blank location strings seen for this company. */
+  locations: string[];
+  /** A representative role title (the newest role's title). */
+  topRole: string;
+  /** Primary city label ("Bengaluru" / "Remote" / "Multiple" / "—"). */
+  city: string;
+  /** Whether this is one of the curated top companies. */
+  isTop: boolean;
+  /** Hiring-intent score, 0–100 (see `scoreCompany` for the formula). */
+  score: number;
+  /** Short human-readable reasons backing the score (for the tooltip). */
+  scoreReasons: string[];
+  /**
+   * Pattern (guessed) company mailboxes — only when a domain is known.
+   * These are common conventions, NOT verified addresses; the UI says so.
+   */
+  emails: {
+    careers: string;
+    hr: string;
+    talent: string;
+    recruiting: string;
+    jobs: string;
+  } | null;
+  /** `https://<domain>/careers` when a domain is known, else null. */
+  careersUrl: string | null;
+  /** `https://<domain>` when a domain is known, else null. */
+  websiteUrl: string | null;
+  /**
+   * Whether `domain` resolved with ≥1 MX record (i.e. can actually receive
+   * mail). Set by `applyDomainVerification`; `buildOutreach` always leaves it
+   * `false` (it does no network I/O). When `false`, the guessed `emails` /
+   * `careersUrl` / `websiteUrl` are suppressed so we never surface a fake
+   * address for a domain that doesn't exist.
+   */
+  domainVerified: boolean;
+  /** Reliable LinkedIn *company* search URL (never a guessed vanity slug). */
+  linkedinCompanySearch: string;
+  /** LinkedIn *people* search for this company's TA / recruiters / HR. */
+  linkedinTaSearch: string;
+  /** Recruiter emails the COMPANY itself published in its job posts. */
+  postedEmails: string[];
+  /** Phone / WhatsApp numbers the company published in its job posts. */
+  postedPhones: string[];
+  /** One-line personalization hook for the outreach email. */
+  personalization: string;
+  /* ---- Ledger status fields (set by `buildOutreachFromLedger`) ---------- */
+  /**
+   * `open_roles > 0` in the latest run — the company is actively hiring right
+   * now. (The jobs-feed `buildOutreach` leaves this `true`, since every grouped
+   * company has ≥1 live role.)
+   */
+  currentlyHiring: boolean;
+  /** `open_roles === 0` — listed in the ledger but not currently hiring. */
+  dormant: boolean;
+  /** ISO "YYYY-MM-DD" the company was last seen in the feed (ledger only; else null). */
+  lastSeen: string | null;
+  /** ISO "YYYY-MM-DD" the company was first added to the ledger (ledger only; else null). */
+  firstSeen: string | null;
+  /** `first_seen` within the last 7 days of the build clock — a new arrival. */
+  isNewCompany: boolean;
+  /**
+   * Currently hiring AND last seen within the last 7 days — fresh, live hiring
+   * activity. The ledger analogue of `postedThisWeek` (which, for the ledger,
+   * tracks fresh posting recency rather than per-role posted_at dates).
+   */
+  freshThisWeek: boolean;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Domain / email derivation                                          */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Hostnames that are logo/asset CDNs or job-board domains — a logo served from
+ * one of these tells us nothing about the *employer's* own web domain, so we
+ * never derive an email/website domain from them. (We still fall back to the
+ * name-based `guessDomain` for these.)
+ */
+const ASSET_OR_BOARD_HOSTS = [
+  "googleusercontent.com",
+  "gstatic.com",
+  "ggpht.com",
+  "licdn.com",
+  "media.licdn.com",
+  "cloudfront.net",
+  "amazonaws.com",
+  "s3.amazonaws.com",
+  "cloudinary.com",
+  "imgix.net",
+  "fastly.net",
+  "akamaized.net",
+  "unsplash.com",
+  "gravatar.com",
+  "wp.com",
+  "wordpress.com",
+  "githubusercontent.com",
+  "logo.clearbit.com",
+  "clearbit.com",
+  "ashbyhq.com",
+  "greenhouse.io",
+  "lever.co",
+  "remoteok.com",
+  "remoteok.io",
+  "builtin.com",
+  "cdn.builtin.com",
+  "simplyhired.com",
+  "myworkdayjobs.com",
+  "amazon.jobs",
+  "google.com",
+];
+
+/**
+ * Job-board / platform email domains. Addresses on these are the *platform's*
+ * (apply-relay, notifications), never the employer's — so we drop them from
+ * the company's "posted emails". Matched as a domain suffix.
+ */
+const PLATFORM_EMAIL_DOMAINS = [
+  "builtin.com",
+  "simplyhired.com",
+  "myworkdayjobs.com",
+  "linkedin.com",
+  "greenhouse.io",
+  "lever.co",
+  "ashbyhq.com",
+  "remoteok.com",
+  "remoteok.io",
+  "example.com",
+  "email.com",
+  "domain.com",
+  "gmail.com",
+  "googlemail.com",
+  "yahoo.com",
+  "outlook.com",
+  "hotmail.com",
+  "protonmail.com",
+  "icloud.com",
+];
+
+/** Strip a leading "www." and lowercase a hostname. */
+function cleanHost(host: string): string {
+  return host.toLowerCase().replace(/^www\./, "");
+}
+
+/**
+ * Try to read the employer's web domain from a direct logo URL. Returns null
+ * unless the logo is served from the company's *own* host (i.e. not an asset
+ * CDN or job board). This catches cases like a logo at `https://acme.com/...`.
+ */
+function domainFromLogo(logo: string | null): string | null {
+  if (!logo) return null;
+  let host: string;
+  try {
+    host = new URL(logo).hostname;
+  } catch {
+    return null;
+  }
+  const clean = cleanHost(host);
+  if (!clean.includes(".")) return null;
+  if (ASSET_OR_BOARD_HOSTS.some((h) => clean === h || clean.endsWith(`.${h}`))) {
+    return null;
+  }
+  return clean;
+}
+
+/**
+ * Best-effort employer web domain: prefer a domain read off the company's own
+ * logo host, else the name-based heuristic (`guessDomain`). The brief's
+ * `guessDomain(company, logo)` shape is realised here — `guessDomain` itself is
+ * name-only, so we layer the logo signal on top. Returns null when undecidable.
+ */
+export function outreachDomain(
+  company: string | null | undefined,
+  logo: string | null
+): string | null {
+  return domainFromLogo(logo) ?? guessDomain(company ?? null);
+}
+
+/** Whether an email's domain is a known platform / freemail address. */
+function isPlatformEmail(email: string): boolean {
+  const at = email.lastIndexOf("@");
+  if (at < 0) return false;
+  const dom = email.slice(at + 1).toLowerCase();
+  return PLATFORM_EMAIL_DOMAINS.some(
+    (d) => dom === d || dom.endsWith(`.${d}`)
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Posted-contact extraction (regex over description + contact text)  */
+/* ------------------------------------------------------------------ */
+
+/** Email matcher — kept conservative; validated/filtered after capture. */
+const EMAIL_RE = /[\w.+-]+@[\w-]+\.[\w.-]+/g;
+/** US phone (optionally +1 prefixed). */
+const PHONE_RE = /(?:\+?1[-.\s]?)?\(?[2-9]\d{2}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g;
+
+const MAX_POSTED = 5;
+
+/**
+ * Pull recruiter emails the company itself published, from the combined
+ * description + contact text of THIS company's roles. Platform / freemail
+ * domains are dropped (those are the board's relay addresses, not the
+ * employer's), results are de-duped case-insensitively and capped.
+ */
+function extractPostedEmails(jobs: Job[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const job of jobs) {
+    const hay = `${job.description ?? ""} ${job.contact ?? ""}`;
+    const matches = hay.match(EMAIL_RE);
+    if (!matches) continue;
+    for (const raw of matches) {
+      const email = raw.trim().replace(/[.,;:)\]]+$/, "").toLowerCase();
+      if (!email.includes("@") || email.length > 100) continue;
+      if (isPlatformEmail(email)) continue;
+      if (seen.has(email)) continue;
+      seen.add(email);
+      out.push(email);
+      if (out.length >= MAX_POSTED) return out;
+    }
+  }
+  return out;
+}
+
+/**
+ * Pull phone / WhatsApp numbers the company published, from the combined
+ * description + contact text. Normalises to a display string, de-dupes by the
+ * trailing 10 digits (so "+1 512…" and "512…" collapse), and caps the list.
+ */
+function extractPostedPhones(jobs: Job[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  const push = (display: string, digits: string) => {
+    const key = digits.slice(-10);
+    if (key.length < 10 || seen.has(key)) return;
+    seen.add(key);
+    out.push(display);
+  };
+  for (const job of jobs) {
+    if (out.length >= MAX_POSTED) break;
+    const hay = `${job.description ?? ""} ${job.contact ?? ""}`;
+
+    for (const m of hay.matchAll(PHONE_RE)) {
+      const digits = m[0].replace(/[^\d]/g, "");
+      // 10-digit local, or 11-digit (1 + 10). Anything else is noise.
+      if (digits.length !== 10 && !(digits.length === 11 && digits.startsWith("1"))) {
+        continue;
+      }
+      push(m[0].trim(), digits);
+      if (out.length >= MAX_POSTED) break;
+    }
+  }
+  return out;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Hiring-intent score (0–100, deterministic)                         */
+/* ------------------------------------------------------------------ */
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Parse a role's `posted_at` (an ISO date, or a loose "YYYY-MM-DD HH:MM:SS"
+ * stamp) to epoch ms, or `NaN` when absent/unparseable. Mirrors the feed's
+ * loose date parsing (space → "T"). Used ONLY for the "posted this week"
+ * signal, which must rely on the real posting date — never `seen_at`.
+ */
+function parsePostedAt(value: string | null | undefined): number {
+  if (!value) return NaN;
+  const normalised = value.includes(" ") ? value.replace(" ", "T") : value;
+  return new Date(normalised).getTime();
+}
+
+/**
+ * Hiring-intent score in [0, 100], higher = a hotter, more reachable target.
+ * Pure and deterministic given a fixed clock. The formula (documented so the
+ * seeker can trust the ranking):
+ *
+ *   volume   (max 55): log-scaled open roles — `round(55 * ln(1+n) / ln(1+25))`,
+ *                       capped at 55 (≈25 roles saturates). Biggest weight: more
+ *                       openings ⇒ more reason to recruit there.
+ *   recency  (max 22): a role posted within 7d → +22; else within 14d → +11;
+ *                       else 0. Fresh demand is the strongest "act now" signal.
+ *   reputation(max 14): reputationTier(name) × 7 → elite 14, top 7, else 0.
+ *   directEmail (+6) : the company published a real (non-platform) recruiter
+ *                       email — a warm, individual channel exists.
+ *   salary      (+3) : at least one role discloses pay (a serious, complete post).
+ *
+ * Sum is clamped to 100. `now` is injectable for deterministic tests.
+ */
+export function scoreCompany(
+  args: {
+    openRoles: number;
+    latestTime: number;
+    hasRecentRole7d: boolean;
+    hasRecentRole14d: boolean;
+    repTier: number;
+    hasDirectEmail: boolean;
+    hasSalary: boolean;
+  }
+): { score: number; reasons: string[] } {
+  const reasons: string[] = [];
+
+  const n = Math.max(0, args.openRoles);
+  const volume = Math.min(55, Math.round((55 * Math.log(1 + n)) / Math.log(1 + 25)));
+
+  let recency = 0;
+  if (args.hasRecentRole7d) {
+    recency = 22;
+    reasons.push("posted this week");
+  } else if (args.hasRecentRole14d) {
+    recency = 11;
+    reasons.push("posted in last 2 weeks");
+  }
+
+  const reputation = args.repTier * 7;
+  if (args.repTier >= 2) reasons.push("elite company");
+  else if (args.repTier === 1) reasons.push("top company");
+
+  const directEmail = args.hasDirectEmail ? 6 : 0;
+  if (args.hasDirectEmail) reasons.push("direct email");
+
+  const salary = args.hasSalary ? 3 : 0;
+  if (args.hasSalary) reasons.push("discloses pay");
+
+  // Roles reason first (most informative), built from the count.
+  reasons.unshift(`${n} open ${n === 1 ? "role" : "roles"}`);
+
+  const score = Math.min(
+    100,
+    volume + recency + reputation + directEmail + salary
+  );
+  return { score, reasons };
+}
+
+/* ------------------------------------------------------------------ */
+/*  City + personalization helpers                                     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Primary city label for a company from its roles' location buckets:
+ *   - one concrete city across all roles → that city's label,
+ *   - several concrete cities → "Multiple",
+ *   - only remote roles → "Remote",
+ *   - nothing recognisable → "—".
+ */
+function primaryCity(jobs: Job[]): string {
+  const cities = new Set<string>();
+  let sawRemote = false;
+  for (const job of jobs) {
+    const key = locationKey(job);
+    if (key === "remote") {
+      sawRemote = true;
+    } else if (key !== "other") {
+      cities.add(LOCATION_LABELS[key]);
+    }
+  }
+  if (cities.size === 1) return [...cities][0];
+  if (cities.size > 1) return "Multiple";
+  if (sawRemote) return "Remote";
+  return "—";
+}
+
+/** Short, comma-joined discipline labels (e.g. "UI/UX & Product"). */
+function disciplineLabels(disciplines: Discipline[]): string {
+  const labels = disciplines.map((d) => DISCIPLINE_MAP[d].label);
+  if (labels.length === 0) return "Strategy & Ops";
+  if (labels.length === 1) return labels[0];
+  if (labels.length === 2) return `${labels[0]} & ${labels[1]}`;
+  return `${labels.slice(0, -1).join(", ")} & ${labels[labels.length - 1]}`;
+}
+
+/* ------------------------------------------------------------------ */
+/*  buildOutreach — the public entry point                             */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Build the company-level outreach list from the flat jobs feed. Grouping,
+ * names, slugs, logos, disciplines and locations come straight from
+ * `buildCompanies` (so identities match the company directory exactly); we then
+ * layer domain/email derivation, posted-contact extraction, the hiring-intent
+ * score and a personalization line on top.
+ *
+ * Returned sorted by score desc, then openRoles desc, then name A–Z. `now` is
+ * injectable for deterministic tests.
+ */
+export function buildOutreach(
+  jobs: Job[],
+  now: number = Date.now()
+): CompanyOutreach[] {
+  const companies = buildCompanies(jobs);
+
+  // Index roles by the same normalized key buildCompanies groups on, so we can
+  // attach each company's own jobs for posted-contact + recency derivation.
+  const byKey = new Map<string, Job[]>();
+  for (const job of jobs) {
+    const original = job.company?.trim();
+    if (!original) continue;
+    const key = normalizeCompany(original) || original.toLowerCase();
+    if (!key) continue;
+    const arr = byKey.get(key);
+    if (arr) arr.push(job);
+    else byKey.set(key, [job]);
+  }
+
+  const out: CompanyOutreach[] = companies.map((c: CompanySummary) => {
+    const key = normalizeCompany(c.name) || c.name.toLowerCase();
+    const companyJobs = byKey.get(key) ?? [];
+
+    const domain = outreachDomain(c.name, c.logo);
+    const emails = domain
+      ? {
+          careers: `careers@${domain}`,
+          hr: `hr@${domain}`,
+          talent: `talent@${domain}`,
+          recruiting: `recruiting@${domain}`,
+          jobs: `jobs@${domain}`,
+        }
+      : null;
+
+    const postedEmails = extractPostedEmails(companyJobs);
+    const postedPhones = extractPostedPhones(companyJobs);
+
+    // Recency + salary signals from this company's own roles.
+    let hasRecent7d = false;
+    let hasRecent14d = false;
+    let hasSalary = false;
+    let latestTime = 0;
+    let newestTitle = "";
+    // "Posted this week" is computed from posted_at ONLY (NOT seen_at, which is
+    // our scrape time and would over-count), so the flag reflects real, recent
+    // hiring activity rather than when we happened to index the role.
+    let freshRoleCount = 0;
+    for (const job of companyJobs) {
+      const t = effectiveTime(job);
+      if (t > latestTime) {
+        latestTime = t;
+        newestTitle = job.title?.trim() || newestTitle;
+      }
+      if (t > 0) {
+        const age = now - t;
+        if (age >= 0 && age <= 7 * DAY_MS) hasRecent7d = true;
+        else if (age >= 0 && age <= 14 * DAY_MS) hasRecent14d = true;
+      }
+      const posted = parsePostedAt(job.posted_at);
+      if (!Number.isNaN(posted)) {
+        const postedAge = now - posted;
+        if (postedAge >= 0 && postedAge <= 7 * DAY_MS) freshRoleCount += 1;
+      }
+      if (job.salary && job.salary.trim()) hasSalary = true;
+    }
+    // 7d implies 14d for the scorer's "within 2 weeks" tier.
+    if (hasRecent7d) hasRecent14d = true;
+
+    const { score, reasons } = scoreCompany({
+      openRoles: c.count,
+      latestTime,
+      hasRecentRole7d: hasRecent7d,
+      hasRecentRole14d: hasRecent14d,
+      repTier: reputationTier(c.name),
+      hasDirectEmail: postedEmails.length > 0,
+      hasSalary,
+    });
+
+    const city = primaryCity(companyJobs);
+    const enc = encodeURIComponent(c.name);
+    const linkedinCompanySearch = `https://www.linkedin.com/search/results/companies/?keywords=${enc}`;
+    const linkedinTaSearch = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(
+      `${c.name} (recruiter OR "talent acquisition" OR "strategy and operations")`
+    )}`;
+
+    const roleWord = c.count === 1 ? "role" : "roles";
+    const where = city && city !== "—" && city !== "Multiple" ? ` in ${city}` : "";
+    const personalization = `you're currently hiring ${c.count} ${disciplineLabels(
+      c.disciplines
+    )} ${roleWord}${where}`;
+
+    return {
+      slug: c.slug,
+      name: c.name,
+      logo: c.logo,
+      domain,
+      openRoles: c.count,
+      freshRoleCount,
+      postedThisWeek: freshRoleCount > 0,
+      disciplines: c.disciplines,
+      locations: c.locations,
+      topRole: newestTitle || c.name,
+      city,
+      isTop: c.isTop,
+      score,
+      scoreReasons: reasons,
+      emails,
+      careersUrl: domain ? `https://${domain}/careers` : null,
+      websiteUrl: domain ? `https://${domain}` : null,
+      // Not verified yet — buildOutreach does no network I/O. A caller layers
+      // MX verification on top via `applyDomainVerification`.
+      domainVerified: false,
+      linkedinCompanySearch,
+      linkedinTaSearch,
+      postedEmails,
+      postedPhones,
+      personalization,
+      // Jobs-feed companies are always "currently hiring" (every group has ≥1
+      // live role); the ledger-specific status fields don't apply here.
+      currentlyHiring: c.count > 0,
+      dormant: c.count === 0,
+      lastSeen: null,
+      firstSeen: null,
+      isNewCompany: false,
+      freshThisWeek: hasRecent7d,
+    } satisfies CompanyOutreach;
+  });
+
+  out.sort(
+    (a, b) =>
+      b.score - a.score ||
+      b.openRoles - a.openRoles ||
+      a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+  );
+
+  return out;
+}
+
+/* ------------------------------------------------------------------ */
+/*  buildOutreachFromLedger — the GROWING-ledger entry point           */
+/* ------------------------------------------------------------------ */
+
+/**
+ * City aliases for bucketing the ledger's FREE-FORM location strings (e.g.
+ * "Austin, TX", "Remote - US") into one clean label. Mirrors the jobs
+ * feed's city buckets; matched as case-insensitive substrings. Kept local so
+ * the ledger path doesn't depend on a job object (the feed's `locationKey`
+ * takes a `Job`). "Remote" is detected separately (it can co-occur with a city).
+ */
+const LEDGER_CITY_ALIASES: Array<{ label: string; aliases: string[] }> = LOCATIONS
+  .filter((l) => l.key !== "remote" && l.key !== "other")
+  .map((l) => ({ label: l.label, aliases: CITY_ALIASES[l.key as keyof typeof CITY_ALIASES] }));
+
+const REMOTE_RE = /\bremote\b|work from home|wfh\b/;
+
+/**
+ * Primary city label for a ledger company from its `locations` strings:
+ *   - one concrete city across all strings → that city's label,
+ *   - several concrete cities → "Multiple",
+ *   - only remote → "Remote",
+ *   - nothing recognisable → "—".
+ * Order follows `LEDGER_CITY_ALIASES` (biggest hubs first), like the feed.
+ */
+function primaryCityFromStrings(locations: string[]): string {
+  const cities = new Set<string>();
+  let sawRemote = false;
+  for (const raw of locations) {
+    const loc = (raw ?? "").toLowerCase();
+    if (!loc.trim()) continue;
+    let matched = false;
+    for (const { label, aliases } of LEDGER_CITY_ALIASES) {
+      if (aliases.some((a) => loc.includes(a))) {
+        cities.add(label);
+        matched = true;
+        break;
+      }
+    }
+    if (!matched && REMOTE_RE.test(loc)) sawRemote = true;
+  }
+  if (cities.size === 1) return [...cities][0];
+  if (cities.size > 1) return "Multiple";
+  if (sawRemote) return "Remote";
+  return "—";
+}
+
+/** Parse an ISO "YYYY-MM-DD" (or full ISO) ledger date to epoch ms, or NaN. */
+function parseLedgerDate(value: string | null | undefined): number {
+  if (!value) return NaN;
+  return new Date(value).getTime();
+}
+
+/** Keep only the disciplines we know how to label (guards a dirty ledger). */
+function validDisciplines(input: unknown): Discipline[] {
+  if (!Array.isArray(input)) return [];
+  const out: Discipline[] = [];
+  for (const d of input) {
+    if (typeof d === "string" && d in DISCIPLINE_MAP && !out.includes(d as Discipline)) {
+      out.push(d as Discipline);
+    }
+  }
+  return out;
+}
+
+/**
+ * Build the company-level outreach list from the GROWING company ledger
+ * (`public/companies-ledger.json`). Unlike `buildOutreach` (which derives
+ * everything from the live jobs feed), this reads pre-aggregated, pre-verified
+ * ledger rows: the `domain` is ALREADY MX-verified at ingest, so we surface the
+ * conventional `careers@`/`hr@` mailboxes + careers/website URLs directly when a
+ * domain is present and suppress them (null) when it isn't — with NO network I/O.
+ *
+ * Per entry:
+ *   - slug = `companySlug(name)`; name, logo, disciplines, locations come from
+ *     the row; `openRoles = open_roles`.
+ *   - `domainVerified = !!domain`; emails/careersUrl/websiteUrl only when domain.
+ *   - `postedEmails`/`postedPhones` = the row's published contacts (already
+ *     platform-filtered upstream — surfaced as-is).
+ *   - status: `currentlyHiring = open_roles > 0`, `dormant = open_roles === 0`,
+ *     `isNewCompany` = first_seen within 7d of `now`, `freshThisWeek` =
+ *     currentlyHiring && last_seen within 7d of `now`.
+ *
+ * Score reuses the hiring-intent formula adapted to ledger fields: open-roles
+ * volume + recency (from `last_seen`, only for currently-hiring rows) +
+ * reputationTier + has-posted-email + verified-domain. Dormant companies get no
+ * recency boost (they score lower) but are STILL listed.
+ *
+ * Sort: currently-hiring first, then score desc, then name A–Z. `now` is
+ * injectable for deterministic tests.
+ */
+export function buildOutreachFromLedger(
+  ledger: CompanyLedger,
+  now: number = Date.now()
+): CompanyOutreach[] {
+  const entries = ledger && typeof ledger === "object" ? Object.values(ledger) : [];
+
+  const rows: CompanyOutreach[] = [];
+  // Track slug collisions so two distinct ledger names never share a row key.
+  const usedSlugs = new Map<string, number>();
+  const uniqueSlug = (base: string): string => {
+    const root = base || "company";
+    const seen = usedSlugs.get(root);
+    if (!seen) {
+      usedSlugs.set(root, 1);
+      return root;
+    }
+    let n = seen + 1;
+    let candidate = `${root}-${n}`;
+    while (usedSlugs.has(candidate)) {
+      n += 1;
+      candidate = `${root}-${n}`;
+    }
+    usedSlugs.set(root, n);
+    usedSlugs.set(candidate, 1);
+    return candidate;
+  };
+
+  for (const entry of entries as LedgerEntry[]) {
+    const name = (entry?.name ?? "").trim();
+    if (!name) continue;
+
+    const domain = entry.domain ? entry.domain.trim().toLowerCase() || null : null;
+    const domainVerified = !!domain;
+    const emails = domain
+      ? {
+          careers: `careers@${domain}`,
+          hr: `hr@${domain}`,
+          talent: `talent@${domain}`,
+          recruiting: `recruiting@${domain}`,
+          jobs: `jobs@${domain}`,
+        }
+      : null;
+
+    const disciplines = validDisciplines(entry.disciplines);
+    const locations = Array.isArray(entry.locations)
+      ? entry.locations.filter((l): l is string => typeof l === "string" && l.trim().length > 0)
+      : [];
+    const openRoles = Math.max(0, Number(entry.open_roles) || 0);
+    const currentlyHiring = openRoles > 0;
+    const dormant = openRoles === 0;
+
+    // Recency from last_seen / arrival from first_seen.
+    const lastSeenMs = parseLedgerDate(entry.last_seen);
+    const firstSeenMs = parseLedgerDate(entry.first_seen);
+    const lastSeenAge = Number.isNaN(lastSeenMs) ? Infinity : now - lastSeenMs;
+    const firstSeenAge = Number.isNaN(firstSeenMs) ? Infinity : now - firstSeenMs;
+    const seenWithin7d = lastSeenAge >= -DAY_MS && lastSeenAge <= 7 * DAY_MS;
+    const seenWithin14d = lastSeenAge >= -DAY_MS && lastSeenAge <= 14 * DAY_MS;
+    const isNewCompany = firstSeenAge >= -DAY_MS && firstSeenAge <= 7 * DAY_MS;
+    const freshThisWeek = currentlyHiring && seenWithin7d;
+
+    const postedEmails = Array.isArray(entry.posted_emails)
+      ? entry.posted_emails.filter((e): e is string => typeof e === "string" && e.includes("@"))
+      : [];
+    const postedPhones = Array.isArray(entry.posted_phones)
+      ? entry.posted_phones.filter((p): p is string => typeof p === "string" && p.trim().length > 0)
+      : [];
+
+    // Hiring-intent score, reusing the shared formula. Recency only counts for
+    // currently-hiring rows (a dormant company's "last seen" is not live demand),
+    // so dormant rows score lower but remain listed.
+    const { score, reasons } = scoreCompany({
+      openRoles,
+      latestTime: Number.isNaN(lastSeenMs) ? 0 : lastSeenMs,
+      hasRecentRole7d: currentlyHiring && seenWithin7d,
+      hasRecentRole14d: currentlyHiring && seenWithin14d,
+      repTier: reputationTier(name),
+      hasDirectEmail: postedEmails.length > 0,
+      // No per-role salary in the ledger — verified domain is the analogous
+      // "complete, reachable target" signal worth a small nudge.
+      hasSalary: domainVerified,
+    });
+
+    const city = primaryCityFromStrings(locations);
+    const enc = encodeURIComponent(name);
+    const linkedinCompanySearch = `https://www.linkedin.com/search/results/companies/?keywords=${enc}`;
+    const linkedinTaSearch = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(
+      `${name} (recruiter OR "talent acquisition" OR "strategy and operations")`
+    )}`;
+
+    const where = city && city !== "—" && city !== "Multiple" ? ` in ${city}` : "";
+    const personalization = currentlyHiring
+      ? `you're currently hiring ${openRoles} ${disciplineLabels(disciplines)} ${
+          openRoles === 1 ? "role" : "roles"
+        }${where}`
+      : `you've recently hired ${disciplineLabels(disciplines)} talent${where}`;
+
+    rows.push({
+      slug: uniqueSlug(companySlug(name)),
+      name,
+      logo: entry.logo?.trim() || null,
+      domain,
+      openRoles,
+      // Ledger has no per-role posted_at; treat fresh recency as the week's
+      // activity so the existing FreshBadge / "fresh" sort keep working.
+      freshRoleCount: freshThisWeek ? openRoles : 0,
+      postedThisWeek: freshThisWeek,
+      disciplines,
+      locations,
+      topRole: name,
+      city,
+      isTop: reputationTier(name) >= 1,
+      score,
+      scoreReasons: reasons,
+      emails,
+      careersUrl: domain ? `https://${domain}/careers` : null,
+      websiteUrl: domain ? `https://${domain}` : null,
+      domainVerified,
+      linkedinCompanySearch,
+      linkedinTaSearch,
+      postedEmails,
+      postedPhones,
+      personalization,
+      currentlyHiring,
+      dormant,
+      lastSeen: entry.last_seen ?? null,
+      firstSeen: entry.first_seen ?? null,
+      isNewCompany,
+      freshThisWeek,
+    } satisfies CompanyOutreach);
+  }
+
+  // Currently-hiring first, then hiring-intent score desc, then name A–Z.
+  rows.sort(
+    (a, b) =>
+      Number(b.currentlyHiring) - Number(a.currentlyHiring) ||
+      b.score - a.score ||
+      a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+  );
+
+  return rows;
+}
+
+/* ------------------------------------------------------------------ */
+/*  MX verification overlay                                            */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Every domain worth MX-checking across an outreach list: the union of each
+ * row's guessed `domain` PLUS the domain (the part after the last "@") of each
+ * recruiter email the companies published in `postedEmails`. Deduped +
+ * lowercased; blanks dropped. Callers pass this to `mailableDomains` so a
+ * single lookup gates BOTH the guessed addresses and the posted ones — i.e.
+ * every email surfaced anywhere is MX-validated.
+ */
+export function collectOutreachDomains(rows: CompanyOutreach[]): string[] {
+  const out = new Set<string>();
+  for (const row of rows) {
+    if (row.domain) out.add(row.domain.trim().toLowerCase());
+    for (const email of row.postedEmails) {
+      const at = email.lastIndexOf("@");
+      if (at < 0) continue;
+      const dom = email.slice(at + 1).trim().toLowerCase();
+      if (dom) out.add(dom);
+    }
+  }
+  return Array.from(out);
+}
+
+/**
+ * Layer DNS MX-verification (from `mailableDomains`) onto an outreach list.
+ * Pure: returns NEW row objects and never mutates the inputs.
+ *
+ * For each row:
+ *   - domain present AND in `mailable` → `domainVerified = true`, and the
+ *     guessed `emails` / `careersUrl` / `websiteUrl` are kept (the domain
+ *     exists and accepts mail, so the conventional mailboxes are worth a try).
+ *   - otherwise → `domainVerified = false`, and `emails` / `careersUrl` /
+ *     `websiteUrl` are all set to `null`, so a dead guess (e.g.
+ *     "Acme Holdings" → acmeholdings.com) never surfaces a fake address.
+ *
+ * Additionally, the recruiter emails the COMPANY itself published
+ * (`postedEmails`) are filtered to only those whose domain (the part after the
+ * last "@") is in `mailable` — so a published address on a dead/typo domain is
+ * dropped too. `mailable` must therefore include the posted-email domains
+ * (the callers feed in the union of guessed + posted domains). `postedPhones`
+ * are left untouched (no DNS to check).
+ *
+ * Everything else that does NOT depend on a mailable domain is preserved: the
+ * LinkedIn company + TA searches, the published phones, the score, the
+ * freshness signals, and the personalization line.
+ */
+export function applyDomainVerification(
+  rows: CompanyOutreach[],
+  mailable: Set<string>
+): CompanyOutreach[] {
+  const emailDomainMailable = (email: string): boolean => {
+    const at = email.lastIndexOf("@");
+    if (at < 0) return false;
+    return mailable.has(email.slice(at + 1).trim().toLowerCase());
+  };
+
+  return rows.map((row) => {
+    // MX-filter the company-published emails too: drop any whose domain isn't
+    // mailable, so a published typo/dead-domain address never surfaces.
+    const postedEmails = row.postedEmails.filter(emailDomainMailable);
+
+    const verified = !!row.domain && mailable.has(row.domain.toLowerCase());
+    if (verified) {
+      return { ...row, domainVerified: true, postedEmails };
+    }
+    return {
+      ...row,
+      domainVerified: false,
+      emails: null,
+      careersUrl: null,
+      websiteUrl: null,
+      postedEmails,
+    };
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/*  CSV export                                                         */
+/* ------------------------------------------------------------------ */
+
+/** Column order for the outreach CSV (header row + `outreachToCsvRow`). */
+export const OUTREACH_CSV_COLUMNS = [
+  "company",
+  "domain",
+  "careers_email",
+  "hr_email",
+  "talent_email",
+  "careers_url",
+  "website_url",
+  "linkedin_company_search",
+  "linkedin_ta_search",
+  "posted_emails",
+  "posted_phones",
+  "open_roles",
+  "disciplines",
+  "locations",
+  "score",
+  "score_reasons",
+  "personalization",
+  "draft_email",
+  "domain_verified",
+  "posted_this_week",
+  "fresh_role_count",
+  // ---- Campaign / status columns (for Mailmeteor / GMass / Apollo) -------
+  "currently_hiring",
+  "last_seen",
+  "first_seen",
+  "touch1_subject",
+  "touch1_body",
+  "touch2_body",
+  "touch3_body",
+  "notes",
+] as const;
+
+/**
+ * The three-touch mail-merge sequence for one company, supplied by the route
+ * (which owns the template module). `touch1` is the main outreach email
+ * (subject + body); `touch2`/`touch3` are the follow-up bodies. Bodies keep the
+ * `[bracketed]` placeholders for the team to fill once before sending.
+ */
+export interface OutreachSequence {
+  touch1Subject: string;
+  touch1Body: string;
+  touch2Body: string;
+  touch3Body: string;
+}
+
+/** RFC-4180 quote: wrap in double-quotes, doubling any embedded quotes. */
+function csvQuote(value: string): string {
+  return `"${value.replace(/"/g, '""')}"`;
+}
+
+/**
+ * One CSV data row (in `OUTREACH_CSV_COLUMNS` order) for a company. Multi-value
+ * fields are " | "-joined; the email/follow-up bodies keep their newlines
+ * (RFC-4180 allows literal newlines inside a quoted field, and Excel / Sheets /
+ * Mailmeteor honour them). `notes` is intentionally an EMPTY
+ * column for the seeker to fill. All fields are quoted +
+ * escaped. `seq` is the three-touch sequence; `draft_email` mirrors touch 1.
+ */
+export function outreachToCsvRow(
+  c: CompanyOutreach,
+  seq: OutreachSequence
+): string {
+  const cells = [
+    c.name,
+    c.domain ?? "",
+    c.emails?.careers ?? "",
+    c.emails?.hr ?? "",
+    c.emails?.talent ?? "",
+    c.careersUrl ?? "",
+    c.websiteUrl ?? "",
+    c.linkedinCompanySearch,
+    c.linkedinTaSearch,
+    c.postedEmails.join(" | "),
+    c.postedPhones.join(" | "),
+    String(c.openRoles),
+    c.disciplines.map((d) => DISCIPLINE_MAP[d].label).join(" | "),
+    c.locations.join(" | "),
+    String(c.score),
+    c.scoreReasons.join(" | "),
+    c.personalization,
+    seq.touch1Body,
+    c.domainVerified ? "true" : "false",
+    c.postedThisWeek ? "true" : "false",
+    String(c.freshRoleCount),
+    // ---- campaign / status columns ----
+    c.currentlyHiring ? "true" : "false",
+    c.lastSeen ?? "",
+    c.firstSeen ?? "",
+    seq.touch1Subject,
+    seq.touch1Body,
+    seq.touch2Body,
+    seq.touch3Body,
+    "", // notes — empty column for your own tracking
+  ];
+  return cells.map((v) => csvQuote(v ?? "")).join(",");
+}
+
+/**
+ * Build the full CSV document (header + one row per company). `sequenceFor`
+ * supplies the per-company three-touch mail-merge sequence (so the CSV builder
+ * stays decoupled from the template module). Prefixed with a UTF-8 BOM so Excel
+ * reads accents correctly. Lines are CRLF-joined per RFC-4180 — drops
+ * cleanly into Mailmeteor / GMass / Apollo.
+ */
+export function buildOutreachCsv(
+  rows: CompanyOutreach[],
+  sequenceFor: (c: CompanyOutreach) => OutreachSequence
+): string {
+  const header = OUTREACH_CSV_COLUMNS.map((h) => csvQuote(h)).join(",");
+  const body = rows.map((c) => outreachToCsvRow(c, sequenceFor(c)));
+  return `﻿${[header, ...body].join("\r\n")}\r\n`;
+}
