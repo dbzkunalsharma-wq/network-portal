@@ -267,7 +267,7 @@ export function normalizeCompany(company: string): string {
   const skip = new Set([
     "inc", "incorporated", "llc", "corp", "corporation", "co", "company", "ltd", "limited",
     "technologies", "technology", "tech", "labs", "lab", "usa", "us", "global", "solutions",
-    "systems", "the", "group", "holdings", "services", "international", "north", "america",
+    "systems", "the", "group", "holdings", "services", "international", "north", "america", "com",
   ]);
   return company
     .normalize("NFKD")

@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   alternates: { types: { "application/rss+xml": "/feed.xml" } },
 };
 
-export const viewport: Viewport = { themeColor: "#18102B", colorScheme: "dark" };
+export const viewport: Viewport = { themeColor: "#0D0D10", colorScheme: "dark" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

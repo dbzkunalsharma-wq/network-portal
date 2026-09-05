@@ -142,8 +142,12 @@ export function JobCard({
             <span className="text-chalk/30" aria-hidden="true">·</span>
           </>
         )}
-        <span>{modeLabel}</span>
-        <span className="text-chalk/30" aria-hidden="true">·</span>
+        {!(job.location ?? "").toLowerCase().includes(mode) && (
+          <>
+            <span>{modeLabel}</span>
+            <span className="text-chalk/30" aria-hidden="true">·</span>
+          </>
+        )}
         <span className="text-chalk/55">{sourceLabel(job.source)}</span>
         <span className="text-chalk/30" aria-hidden="true">·</span>
         <span className="text-chalk/45">{postedAgo(job)}</span>

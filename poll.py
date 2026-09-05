@@ -58,8 +58,18 @@ def _is_stale(value, now=None, max_age_days=MAX_AGE_DAYS) -> bool:
     return (now - dt).days > max_age_days
 
 
+_COMPANY_NOISE = re.compile(
+    r"(inc|incorporated|llc|corp|corporation|co|company|ltd|limited|usa|us|com|services|"
+    r"technologies|technology|holdings|group|the)",
+    re.IGNORECASE,
+)
+
+
 def _dedup_key(title, company):
-    comp = re.sub(r"\s+", " ", (company or "").strip().lower())
+    comp = (company or "").strip().lower().replace("&", " and ")
+    comp = re.sub(r"[^a-z0-9 ]+", " ", comp)
+    comp = _COMPANY_NOISE.sub(" ", comp)
+    comp = re.sub(r"\s+", " ", comp).strip()
     if not comp:
         return None
     t = (title or "").lower()

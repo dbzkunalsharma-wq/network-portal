@@ -178,8 +178,12 @@ export function JobDetailModal({ job, onClose }: { job: Job | null; onClose: () 
                 <span className="text-chalk/25" aria-hidden="true">·</span>
               </>
             )}
-            <span>{modeLabel}</span>
-            <span className="text-chalk/25" aria-hidden="true">·</span>
+            {!(job.location ?? "").toLowerCase().includes(mode) && (
+              <>
+                <span>{modeLabel}</span>
+                <span className="text-chalk/25" aria-hidden="true">·</span>
+              </>
+            )}
             <span>{sourceLabel(job.source)}</span>
             <span className="text-chalk/25" aria-hidden="true">·</span>
             <span className="text-chalk/45">{postedAgo(job)}</span>

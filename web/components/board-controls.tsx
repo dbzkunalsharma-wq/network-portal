@@ -367,7 +367,7 @@ function GlassSelect({
           "appearance-none rounded-full border border-line bg-chalk/[0.06] py-1.5 pl-9 pr-8 text-xs font-medium text-chalk",
           " transition-colors duration-200 hover:border-chalk/25 hover:bg-chalk/[0.1]",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
-          "[&>option]:bg-[#221838] [&>option]:text-chalk"
+          "[&>option]:bg-[#17171c] [&>option]:text-chalk"
         )}
       >
         {children}

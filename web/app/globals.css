@@ -2,29 +2,29 @@
 
 /* ------------------------------------------------------------------ */
 /*  Network Portal — flat design system                                        */
-/*  Palette: Electric Violet #834DFB · Turbo #F0E100 · Haiti #18102B   */
+/*  Palette: Electric Violet #834DFB · Turbo #F0E100 · Black #0D0D10   */
 /*  · Blue Chalk #F5F3FF. Solid fills, hard edges, no blur, no         */
 /*  gradients, no drop shadows.                                        */
 /* ------------------------------------------------------------------ */
 
 :root {
-  --background: #18102b; /* Haiti */
+  --background: #0d0d10; /* near black */
   --foreground: #f5f3ff; /* Blue Chalk */
   --brand: #834dfb; /* Electric Violet */
   --turbo: #f0e100; /* Turbo */
-  --line: #2f2450; /* card hairline on haiti */
-  --surface: #221838; /* flat card surface */
+  --line: #26262d; /* card hairline on black */
+  --surface: #17171c; /* flat card surface */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-ink: #18102b;
+  --color-ink: #0d0d10;
   --color-chalk: #f5f3ff;
   --color-brand: #834dfb;
   --color-turbo: #f0e100;
-  --color-line: #2f2450;
-  --color-surface: #221838;
+  --color-line: #26262d;
+  --color-surface: #17171c;
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }

@@ -621,7 +621,7 @@ function SelectPill({
           "appearance-none rounded-full border border-line bg-chalk/[0.06] py-2.5 pl-4 pr-9 text-sm font-medium text-chalk",
           " transition-colors duration-200 hover:border-chalk/25 hover:bg-chalk/[0.1]",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
-          "[&>option]:bg-[#221838] [&>option]:text-chalk"
+          "[&>option]:bg-[#17171c] [&>option]:text-chalk"
         )}
       >
         {children}
@@ -950,7 +950,7 @@ function FollowUpMenu({ company }: { company: CompanyOutreach }) {
           role="menu"
           className={clsx(
             "absolute right-0 top-full z-20 mt-1.5 min-w-[14rem] overflow-hidden rounded-xl border border-line p-1",
-            "bg-[#221838]"
+            "bg-[#17171c]"
           )}
         >
           <button
