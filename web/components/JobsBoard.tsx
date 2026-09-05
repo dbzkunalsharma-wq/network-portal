@@ -313,7 +313,7 @@ function JobsBoardInner() {
         </div>
 
         <div className="mt-5">
-          <div className="dod-glass rounded-2xl p-3 sm:p-4">
+          <div className="pb-glass rounded-2xl p-3 sm:p-4">
             <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <div className="flex-1">
@@ -425,7 +425,7 @@ function JobsBoardInner() {
         )}
 
         <div className="mt-5 flex min-h-6 items-center justify-between gap-3">
-          <p className="text-sm text-ink/55" aria-live="polite" aria-atomic="true">
+          <p className="text-sm text-chalk/55" aria-live="polite" aria-atomic="true">
             {loading ? "Loading roles…" : state === "error" ? "" : resultLabel}
           </p>
           {f.hasActiveFilters && !loading && state !== "error" && (
@@ -433,8 +433,8 @@ function JobsBoardInner() {
               type="button"
               onClick={resetAll}
               className={clsx(
-                "shrink-0 text-xs font-medium text-ink/50 transition-colors hover:text-ink",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30 focus-visible:rounded"
+                "shrink-0 text-xs font-medium text-chalk/50 transition-colors hover:text-chalk",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/30 focus-visible:rounded"
               )}
             >
               Clear all
@@ -446,13 +446,13 @@ function JobsBoardInner() {
           {loading ? (
             <SkeletonGrid count={6} />
           ) : state === "error" ? (
-            <div className="dod-glass flex flex-col items-center justify-center rounded-3xl border-red-300 px-6 py-20 text-center">
-              <h3 className="text-base font-semibold text-ink">Couldn’t load the job feed</h3>
-              <p className="mt-1 max-w-sm text-sm text-ink/50">The data file didn’t respond. Refresh the page to try again.</p>
+            <div className="pb-glass flex flex-col items-center justify-center rounded-3xl border-red-300 px-6 py-20 text-center">
+              <h3 className="text-base font-semibold text-chalk">Couldn’t load the job feed</h3>
+              <p className="mt-1 max-w-sm text-sm text-chalk/50">The data file didn’t respond. Refresh the page to try again.</p>
               <button
                 type="button"
                 onClick={() => window.location.reload()}
-                className="mt-5 rounded-xl border border-ink/10 bg-ink/[0.06] px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-ink/[0.12]"
+                className="mt-5 rounded-xl border border-chalk/10 bg-chalk/[0.06] px-4 py-2 text-sm font-medium text-chalk transition-colors hover:bg-chalk/[0.12]"
               >
                 Reload
               </button>
@@ -491,10 +491,10 @@ export function JobsBoard() {
 function BoardFallback() {
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-8 sm:px-6 sm:pt-12 lg:px-8">
-      <div className="dod-glass dod-shimmer h-[120px] rounded-3xl" />
+      <div className="pb-glass pb-shimmer h-[120px] rounded-3xl" />
       <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="dod-glass dod-shimmer h-28 rounded-2xl" aria-hidden="true" />
+          <div key={i} className="pb-glass pb-shimmer h-28 rounded-2xl" aria-hidden="true" />
         ))}
       </div>
       <div className="mt-8">

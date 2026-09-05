@@ -1,21 +1,21 @@
-# DOD US refresh — scrape every source, rebuild web/public/jobs.json, redeploy to Vercel.
-# Run manually:  powershell -ExecutionPolicy Bypass -File D:\dod-usa\refresh.ps1
+# Network Portal refresh — scrape every source, rebuild web/public/jobs.json, redeploy to Vercel.
+# Run manually:  powershell -ExecutionPolicy Bypass -File D:\network-portal\refresh.ps1
 # Uses the local Vercel CLI login (no token needed). Output is logged to refresh-last.log.
 
 $ErrorActionPreference = 'SilentlyContinue'
-$log = 'D:\dod-usa\refresh-last.log'
-$py  = 'D:\dod-usa\.venv\Scripts\python.exe'
+$log = 'D:\network-portal\refresh-last.log'
+$py  = 'D:\network-portal\.venv\Scripts\python.exe'
 
-"=== DOD US refresh started $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ===" | Out-File $log -Encoding utf8
-$env:PYTHONPATH = 'D:\dod-usa'
+"=== Network Portal refresh started $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ===" | Out-File $log -Encoding utf8
+$env:PYTHONPATH = 'D:\network-portal'
 $env:PYTHONIOENCODING = 'utf-8'
 
-& $py D:\dod-usa\poll.py --seed *>> $log
-& $py D:\dod-usa\export.py      *>> $log
-& $py D:\dod-usa\ledger.py      *>> $log
+& $py D:\network-portal\poll.py --seed *>> $log
+& $py D:\network-portal\export.py      *>> $log
+& $py D:\network-portal\ledger.py      *>> $log
 
-Set-Location 'D:\dod-usa\web'
+Set-Location 'D:\network-portal\web'
 & npx --yes vercel@latest --prod --yes *>> $log
-Set-Location 'D:\dod-usa'
+Set-Location 'D:\network-portal'
 
-"=== DOD US refresh finished $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ===" | Out-File $log -Append -Encoding utf8
+"=== Network Portal refresh finished $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ===" | Out-File $log -Append -Encoding utf8

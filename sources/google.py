@@ -14,7 +14,7 @@ import time
 import httpx
 from bs4 import BeautifulSoup
 
-log = logging.getLogger("dod")
+log = logging.getLogger("netportal")
 
 _BASE = "https://www.google.com/about/careers/applications/jobs/results"
 _UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "

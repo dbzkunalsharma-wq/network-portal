@@ -51,7 +51,7 @@ export async function GET(): Promise<Response> {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-<title>DOD US — best-fit Strategy &amp; Ops roles</title>
+<title>Network Portal — best-fit Strategy &amp; Ops roles</title>
 <link>${esc(SITE_URL)}</link>
 <atom:link href="${esc(SITE_URL)}/feed.xml" rel="self" type="application/rss+xml"/>
 <description>US Strategy &amp; Operations, BizOps, Growth, Pricing and Strategic Finance roles scoring ${MIN_FIT}+ on profile fit. Refreshed twice a day.</description>

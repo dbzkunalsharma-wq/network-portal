@@ -429,7 +429,7 @@ export function EmptyIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-/* ---------------- DOD US additions ---------------- */
+/* ---------------- Network Portal additions ---------------- */
 
 /** Strategy & Ops — a compass/gear hybrid. */
 export function StratOpsIcon(props: SVGProps<SVGSVGElement>) {

@@ -29,10 +29,10 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
 )
-log = logging.getLogger("dod")
+log = logging.getLogger("netportal")
 
 WELCOME = (
-    "I'm <b>DOD</b> — your design-opportunity hunter. I love to work, so you don't have to.\n\n"
+    "I'm <b>Network Portal</b> — your design-opportunity hunter. I love to work, so you don't have to.\n\n"
     "I watch design roles across the web — UI/UX, Product, Communication, Industrial — "
     "and ping you the moment a fresh one lands, before it hits the big boards.\n\n"
     "Pick the disciplines you care about and I'll send only those."
@@ -145,7 +145,7 @@ async def preview(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "DOD commands:\n"
+        "Network Portal commands:\n"
         "/start — begin and pick disciplines\n"
         "/settings — change your disciplines\n"
         "/latest [discipline] — browse recent roles, newest first\n"
@@ -183,7 +183,7 @@ def main():
     app.add_handler(CommandHandler("help", help_cmd))
     app.add_handler(CallbackQueryHandler(on_callback))
     app.add_error_handler(on_error)
-    log.info("DOD is up and polling. Press Ctrl+C to stop.")
+    log.info("Network Portal is up and polling. Press Ctrl+C to stop.")
     app.run_polling(allowed_updates=Update.ALL_TYPES, drop_pending_updates=True)
 
 

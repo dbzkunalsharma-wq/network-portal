@@ -1,8 +1,8 @@
-# DOD US — Live US Strategy & Operations jobs
+# Network Portal — Live US Strategy & Operations jobs
 
 A job radar tuned for one profile: a **Senior Strategy & Operations Manager** (marketplace /
 delivery / consumer growth / pricing / capital allocation) based in **Austin, TX**, open to
-remote-US roles. Forked from [DOD](https://github.com/dbzkunalsharma-wq/dod) (India design jobs).
+remote-US roles. Forked from [Network Portal](https://github.com/dbzkunalsharma-wq/dod) (India design jobs) (India design jobs).
 
 ## What it does
 

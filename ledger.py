@@ -23,7 +23,7 @@ from urllib.parse import urlparse
 
 import httpx
 
-log = logging.getLogger("dod.ledger")
+log = logging.getLogger("netportal.ledger")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(name)s | %(message)s")
 
 JOBS = Path(__file__).parent / "web" / "public" / "jobs.json"

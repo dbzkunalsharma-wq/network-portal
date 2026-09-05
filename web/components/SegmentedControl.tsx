@@ -32,7 +32,7 @@ export function SegmentedControl({
 }) {
   const allActive = value === "all";
   const base =
-    "relative flex flex-col justify-between overflow-hidden rounded-3xl p-4 text-left transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-chalk";
+    "relative flex flex-col justify-between overflow-hidden rounded-3xl p-4 text-left transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-chalk focus-visible:ring-offset-2 focus-visible:ring-offset-ink";
 
   return (
     <div role="group" aria-label="Filter by discipline" className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -40,10 +40,10 @@ export function SegmentedControl({
         type="button"
         aria-pressed={allActive}
         onClick={() => onChange("all")}
-        className={clsx(base, "bg-ink text-white", allActive ? "ring-2 ring-ink ring-offset-2 ring-offset-chalk" : "opacity-75 hover:opacity-100")}
+        className={clsx(base, "bg-chalk text-ink", allActive ? "ring-2 ring-chalk ring-offset-2 ring-offset-ink" : "opacity-75 hover:opacity-100")}
       >
         <div className="flex items-center justify-between">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-chalk/15">
             <GridIcon className="h-[18px] w-[18px]" />
           </span>
           <span className="text-3xl font-bold tabular-nums sm:text-4xl">{total.toLocaleString("en-US")}</span>
@@ -64,7 +64,7 @@ export function SegmentedControl({
             type="button"
             aria-pressed={active}
             onClick={() => onChange(d.key)}
-            className={clsx(base, d.card, d.cardText, active ? "ring-2 ring-ink ring-offset-2 ring-offset-chalk" : "opacity-75 hover:opacity-100")}
+            className={clsx(base, d.card, d.cardText, active ? "ring-2 ring-chalk ring-offset-2 ring-offset-ink" : "opacity-75 hover:opacity-100")}
           >
             <div className="flex items-center justify-between">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-black/10">

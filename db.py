@@ -2,7 +2,7 @@ import sqlite3
 from contextlib import closing
 from pathlib import Path
 
-DB_PATH = Path(__file__).parent / "dod.db"
+DB_PATH = Path(__file__).parent / "netportal.db"
 
 
 def _conn():

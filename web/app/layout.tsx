@@ -8,7 +8,7 @@ import "./globals.css";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
 
-const SITE_TITLE = "DOD US — Live US Strategy & Operations jobs";
+const SITE_TITLE = "Network Portal — US Strategy & Ops jobs, scored for you";
 const SITE_DESCRIPTION =
   "The fastest way to find Strategy & Operations, BizOps, Corporate Strategy, Growth & Pricing and Strategic Finance roles across the USA. Every posting scored for fit, flagged for visa sponsorship wording and pay, from LinkedIn, Indeed's index, Built In, Greenhouse, Lever, Ashby, Workday, Amazon and Google.";
 
@@ -21,10 +21,10 @@ const SITE_OG_IMAGE = ogImageUrl({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: SITE_TITLE, template: "%s · DOD US" },
+  title: { default: SITE_TITLE, template: "%s · Network Portal" },
   description: SITE_DESCRIPTION,
-  applicationName: "DOD US",
-  authors: [{ name: "DOD" }],
+  applicationName: "Network Portal",
+  authors: [{ name: "Network Portal" }],
   keywords: [
     "strategy and operations jobs",
     "bizops jobs",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     type: "website",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    siteName: "DOD US",
+    siteName: "Network Portal",
     locale: "en_US",
     images: [{ url: SITE_OG_IMAGE, width: 1200, height: 630, alt: SITE_TITLE }],
   },
@@ -50,16 +50,16 @@ export const metadata: Metadata = {
   alternates: { types: { "application/rss+xml": "/feed.xml" } },
 };
 
-export const viewport: Viewport = { themeColor: "#06070d", colorScheme: "dark" };
+export const viewport: Viewport = { themeColor: "#18102B", colorScheme: "dark" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full">
-        <div className="dod-backdrop" aria-hidden="true">
-          <div className="dod-bloom dod-bloom--violet" />
-          <div className="dod-bloom dod-bloom--teal" />
-          <div className="dod-bloom dod-bloom--amber" />
+        <div className="pb-backdrop" aria-hidden="true">
+          <div className="pb-bloom pb-bloom--violet" />
+          <div className="pb-bloom pb-bloom--teal" />
+          <div className="pb-bloom pb-bloom--amber" />
         </div>
         {children}
         <Analytics />

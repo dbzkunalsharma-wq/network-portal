@@ -25,7 +25,10 @@ NON_ROLE = [
     "devops", "dev ops", "sysops", "secops", "security operations", "soc analyst",
     "it operations", "network operations", "cloud operations", "noc ",
     "database", "data engineer", "data analyst", "data scientist", "machine learning",
-    "qa ", "quality assurance", "test engineer",
+    "qa ", "quality assurance", "test engineer", "technical specialist", "solutions specialist",
+    "solution specialist", "technical account", "sales engineer", "pre-sales", "presales",
+    "renewal", "renewals", "partner development", "partnerships development", "channel manager",
+    "field marketing", "customer marketing", "market development", "alliances",
     # product / program (generic) — product OPS and STRATEGIC programs are rescued below
     "product manager", "product management", "product owner", "technical program",
     "scrum", "agile coach", "delivery manager", "implementation manager",
@@ -164,7 +167,7 @@ STRATEGY_TITLES = [
     "office of the ceo", "office of the coo", "office of the cfo", "ceo office", "ceo's office",
     "strategic projects", "special projects", "strategy & business development",
     "strategy and business development", "strategy & bd", "strategy & partnerships",
-    "strategy and partnerships", "strategic partnerships", "strategy & execution",
+    "strategy and partnerships", "strategy & execution",
     "strategy and execution", "strategy & growth", "strategy and growth",
 ]
 
@@ -183,7 +186,7 @@ GROWTH_TITLES = [
     "lifecycle strategy", "lifecycle manager", "lifecycle marketing", "retention strategy",
     "retention manager", "retention lead", "churn", "customer strategy", "consumer strategy",
     "promotions strategy", "promo strategy", "incentives", "incentive strategy",
-    "market development", "territory strategy", "marketplace strategy", "marketplace growth",
+    "territory strategy", "marketplace strategy", "marketplace growth",
     "supply strategy", "demand strategy", "supply & demand", "supply and demand",
     "marketplace manager", "marketplace lead", "marketplace principal", "marketplace",
     "loyalty strategy", "loyalty manager", "membership strategy", "engagement strategy",
@@ -304,7 +307,7 @@ def classify(title: str, description: str = "") -> str | None:
                     "yield management", "marketplace strategy", "marketplace growth", "loyalty",
                     "promotions strategy", "promo strategy", "incentive", "supply & demand",
                     "supply and demand", "supply strategy", "demand strategy", "acquisition strategy",
-                    "engagement strategy", "customer strategy", "consumer strategy", "market development",
+                    "engagement strategy", "customer strategy", "consumer strategy",
                     "territory strategy", "growth strategist", "growth principal", "growth associate",
                     "growth analyst")):
         return "growth"
@@ -432,6 +435,10 @@ if __name__ == "__main__":
     assert classify("Restaurant General Manager") is None
     assert classify("Field Service Technician") is None
     assert classify("Nurse Manager, Operations") is None
+    assert classify("Sr. Worldwide Technical Specialist, Data & AI GTM Strategy") is None
+    assert classify("Senior Renewal Operations Manager") is None
+    assert classify("Strategic Partnerships Development Manager") is None
+    assert classify("Principal Market Development") is None
     assert classify("Solutions Architect, Strategy") is None
     # --- guards --------------------------------------------------------------
     assert classify("Strategy & Operations Manager", "You will partner with engineers and sales") == "stratops"

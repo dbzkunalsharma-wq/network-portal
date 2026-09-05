@@ -46,8 +46,8 @@ const STATUS_VISUALS: Record<
   { chip: string; dot: string }
 > = {
   "to-contact": {
-    chip: "bg-ink/10 text-ink/80 ring-ink/25",
-    dot: "bg-ink/60",
+    chip: "bg-chalk/10 text-chalk/80 ring-chalk/25",
+    dot: "bg-chalk/60",
   },
   contacted: {
     chip: "bg-sky-100 text-sky-700 ring-sky-300",
@@ -122,10 +122,10 @@ function CopyButton({
       title={label}
       className={clsx(
         "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
         copied
           ? "border-green-600 bg-green-600 text-white"
-          : "border-line bg-ink/[0.05] text-ink/70 hover:border-ink/25 hover:bg-ink/[0.1] hover:text-ink",
+          : "border-line bg-chalk/[0.05] text-chalk/70 hover:border-chalk/25 hover:bg-chalk/[0.1] hover:text-chalk",
         className
       )}
     >
@@ -156,7 +156,7 @@ function StatusSelector({
     <div
       role="group"
       aria-label={`Outreach status for ${label}`}
-      className="inline-flex flex-wrap items-center gap-1 rounded-full border border-line bg-ink/[0.04] p-1"
+      className="inline-flex flex-wrap items-center gap-1 rounded-full border border-line bg-chalk/[0.04] p-1"
     >
       {OUTREACH_STATUS_ORDER.map((s) => {
         const active = value === s;
@@ -169,10 +169,10 @@ function StatusSelector({
             aria-pressed={active}
             className={clsx(
               "rounded-full px-2 py-0.5 text-[11px] font-medium transition-all duration-200",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
               active
                 ? clsx(v.chip, "ring-1 ring-inset")
-                : "text-ink/45 hover:bg-ink/[0.08] hover:text-ink"
+                : "text-chalk/45 hover:bg-chalk/[0.08] hover:text-chalk"
             )}
           >
             {OUTREACH_STATUS_LABELS[s]}
@@ -194,7 +194,7 @@ function ScorePill({ score, reasons }: { score: number; reasons: string[] }) {
       ? "bg-emerald-100 text-emerald-700 ring-emerald-300"
       : score >= 45
         ? "bg-amber-100 text-amber-700 ring-amber-300"
-        : "bg-ink/8 text-ink/70 ring-ink/20";
+        : "bg-chalk/8 text-chalk/70 ring-chalk/20";
   return (
     <span
       title={reasons.join(" · ")}
@@ -232,10 +232,10 @@ function ActionsBar({ rows }: { rows: CompanyOutreach[] }) {
     <div className="flex flex-wrap items-center gap-2.5">
       <a
         href="/network.csv"
-        download="dod-us-network.csv"
+        download="network-portal-contacts.csv"
         className={clsx(
           "inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-white transition-colors",
-          "hover:bg-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
+          "hover:bg-brand hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40"
         )}
       >
         <ArrowUpRightIcon className="h-4 w-4 rotate-90" />
@@ -247,7 +247,7 @@ function ActionsBar({ rows }: { rows: CompanyOutreach[] }) {
         className="px-4 py-2 text-sm"
       >
         Copy all domains
-        <span className="tabular-nums text-ink/50">({domains.length})</span>
+        <span className="tabular-nums text-chalk/50">({domains.length})</span>
       </CopyButton>
     </div>
   );
@@ -379,7 +379,7 @@ export function OutreachTable({ companies }: { companies: CompanyOutreach[] }) {
     { key: "all", label: "All" },
     { key: "hiring", label: "Hiring now", dot: "bg-emerald-400" },
     { key: "new", label: "New this week", dot: "bg-sky-400" },
-    { key: "dormant", label: "Dormant", dot: "bg-ink/35" },
+    { key: "dormant", label: "Dormant", dot: "bg-chalk/35" },
   ];
 
   return (
@@ -390,8 +390,8 @@ export function OutreachTable({ companies }: { companies: CompanyOutreach[] }) {
       </div>
 
       {/* header line — total · hiring now · grows daily */}
-      <p className="mt-5 text-sm text-ink/55">
-        <span className="font-medium text-ink/80">
+      <p className="mt-5 text-sm text-chalk/55">
+        <span className="font-medium text-chalk/80">
           {companies.length.toLocaleString("en-US")}
         </span>{" "}
         companies ·{" "}
@@ -402,12 +402,12 @@ export function OutreachTable({ companies }: { companies: CompanyOutreach[] }) {
       </p>
 
       {/* search + sort island */}
-      <div className="dod-glass mt-3 rounded-2xl p-3 sm:p-4">
+      <div className="pb-glass mt-3 rounded-2xl p-3 sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-chalk/40"
             >
               <SearchIcon className="h-4 w-4" />
             </span>
@@ -419,9 +419,9 @@ export function OutreachTable({ companies }: { companies: CompanyOutreach[] }) {
               placeholder="Search company, metro or discipline…"
               aria-label="Search by company, city or discipline"
               className={clsx(
-                "w-full rounded-full border border-line bg-ink/[0.05] py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-ink/40",
-                " transition-colors duration-200 hover:border-ink/20",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
+                "w-full rounded-full border border-line bg-chalk/[0.05] py-2.5 pl-10 pr-4 text-sm text-chalk placeholder:text-chalk/40",
+                " transition-colors duration-200 hover:border-chalk/20",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40"
               )}
             />
           </div>
@@ -473,7 +473,7 @@ export function OutreachTable({ companies }: { companies: CompanyOutreach[] }) {
               onClick={() => setLifecycle(key)}
             >
               {label}
-              <span className="tabular-nums text-ink/45">
+              <span className="tabular-nums text-chalk/45">
                 ({lifecycleCounts[key].toLocaleString("en-US")})
               </span>
             </FilterPill>
@@ -494,7 +494,7 @@ export function OutreachTable({ companies }: { companies: CompanyOutreach[] }) {
               }
             >
               {OUTREACH_STATUS_LABELS[status]}
-              <span className="tabular-nums text-ink/45">({count})</span>
+              <span className="tabular-nums text-chalk/45">({count})</span>
             </FilterPill>
           ))}
         </div>
@@ -502,7 +502,7 @@ export function OutreachTable({ companies }: { companies: CompanyOutreach[] }) {
 
       {/* result count */}
       <p
-        className="mt-5 text-sm text-ink/55"
+        className="mt-5 text-sm text-chalk/55"
         aria-live="polite"
         aria-atomic="true"
       >
@@ -516,16 +516,16 @@ export function OutreachTable({ companies }: { companies: CompanyOutreach[] }) {
       </p>
 
       {filtered.length === 0 ? (
-        <div className="dod-glass mt-4 rounded-3xl px-6 py-16 text-center">
-          <p className="text-sm text-ink/55">No companies match your filters.</p>
+        <div className="pb-glass mt-4 rounded-3xl px-6 py-16 text-center">
+          <p className="text-sm text-chalk/55">No companies match your filters.</p>
         </div>
       ) : (
         <>
           {/* desktop table */}
-          <div className="dod-glass mt-4 hidden overflow-hidden rounded-2xl lg:block">
+          <div className="pb-glass mt-4 hidden overflow-hidden rounded-2xl lg:block">
             <table className="w-full border-collapse text-left text-sm">
               <thead>
-                <tr className="border-b border-line text-xs uppercase tracking-wide text-ink/45">
+                <tr className="border-b border-line text-xs uppercase tracking-wide text-chalk/45">
                   <th scope="col" className="px-4 py-3 font-medium">
                     Company
                   </th>
@@ -579,12 +579,12 @@ export function OutreachTable({ companies }: { companies: CompanyOutreach[] }) {
                 type="button"
                 onClick={() => setVisible((v) => v + PAGE_SIZE)}
                 className={clsx(
-                  "inline-flex items-center gap-2 rounded-full border border-ink bg-ink/10 px-5 py-2.5 text-sm font-medium text-ink transition-colors",
-                  "hover:bg-ink/[0.16] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
+                  "inline-flex items-center gap-2 rounded-full border border-chalk bg-chalk/10 px-5 py-2.5 text-sm font-medium text-chalk transition-colors",
+                  "hover:bg-chalk/[0.16] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40"
                 )}
               >
                 Load more
-                <span className="tabular-nums text-ink/55">
+                <span className="tabular-nums text-chalk/55">
                   ({(filtered.length - shown.length).toLocaleString("en-US")} more)
                 </span>
               </button>
@@ -618,17 +618,17 @@ function SelectPill({
         onChange={(e) => onChange(e.target.value)}
         aria-label={ariaLabel}
         className={clsx(
-          "appearance-none rounded-full border border-line bg-ink/[0.06] py-2.5 pl-4 pr-9 text-sm font-medium text-ink",
-          " transition-colors duration-200 hover:border-ink/25 hover:bg-ink/[0.1]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
-          "[&>option]:bg-white [&>option]:text-ink"
+          "appearance-none rounded-full border border-line bg-chalk/[0.06] py-2.5 pl-4 pr-9 text-sm font-medium text-chalk",
+          " transition-colors duration-200 hover:border-chalk/25 hover:bg-chalk/[0.1]",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
+          "[&>option]:bg-[#221838] [&>option]:text-chalk"
         )}
       >
         {children}
       </select>
       <ChevronDownIcon
         aria-hidden="true"
-        className="pointer-events-none absolute right-3.5 h-3.5 w-3.5 text-ink/45"
+        className="pointer-events-none absolute right-3.5 h-3.5 w-3.5 text-chalk/45"
       />
     </div>
   );
@@ -659,10 +659,10 @@ function FilterPill({
       title={title}
       className={clsx(
         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
         active
-          ? "border-ink bg-ink text-white"
-          : "border-line bg-ink/[0.04] text-ink/60 hover:border-ink/25 hover:bg-ink/[0.08] hover:text-ink"
+          ? "border-chalk bg-chalk text-ink"
+          : "border-line bg-chalk/[0.04] text-chalk/60 hover:border-chalk/25 hover:bg-chalk/[0.08] hover:text-chalk"
       )}
     >
       {dot && <span className={clsx("h-1.5 w-1.5 rounded-full", dot)} />}
@@ -722,9 +722,9 @@ function StatusBadge({ company }: { company: CompanyOutreach }) {
           title={`No live roles in the latest run — last seen ${formatLedgerDate(
             company.lastSeen
           )}`}
-          className="inline-flex items-center gap-1 rounded-full bg-ink/[0.06] px-2 py-0.5 text-[11px] font-medium text-ink/50 ring-1 ring-inset ring-ink/15"
+          className="inline-flex items-center gap-1 rounded-full bg-chalk/[0.06] px-2 py-0.5 text-[11px] font-medium text-chalk/50 ring-1 ring-inset ring-chalk/15"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-ink/35" />
+          <span className="h-1.5 w-1.5 rounded-full bg-chalk/35" />
           Dormant · {formatLedgerDate(company.lastSeen)}
         </span>
       )}
@@ -758,7 +758,7 @@ function ContactCell({ company }: { company: CompanyOutreach }) {
       {emails ? (
         <div className="flex flex-wrap items-center gap-1.5">
           <CopyButton value={emails.careers} label={`Copy ${emails.careers}`}>
-            <MailIcon className="h-3.5 w-3.5 text-ink/45" />
+            <MailIcon className="h-3.5 w-3.5 text-chalk/45" />
             careers@
           </CopyButton>
           <CopyButton value={emails.hr} label={`Copy ${emails.hr}`}>
@@ -775,9 +775,9 @@ function ContactCell({ company }: { company: CompanyOutreach }) {
       ) : (
         <span
           title="No mailable domain (the guessed domain didn't resolve) — use the LinkedIn recruiter search instead"
-          className="text-xs text-ink/40"
+          className="text-xs text-chalk/40"
         >
-          — <span className="text-ink/30">use LinkedIn</span>
+          — <span className="text-chalk/30">use LinkedIn</span>
         </span>
       )}
 
@@ -827,12 +827,12 @@ function LinkPill({
       target="_blank"
       rel="noopener noreferrer"
       className={clsx(
-        "inline-flex items-center gap-1 rounded-full border border-line bg-ink/[0.05] px-2.5 py-1 text-xs font-medium text-ink/70 transition-colors",
-        "hover:border-ink/25 hover:bg-ink/[0.1] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
+        "inline-flex items-center gap-1 rounded-full border border-line bg-chalk/[0.05] px-2.5 py-1 text-xs font-medium text-chalk/70 transition-colors",
+        "hover:border-chalk/25 hover:bg-chalk/[0.1] hover:text-chalk focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40"
       )}
     >
       {children}
-      <ArrowUpRightIcon className="h-3 w-3 text-ink/40" />
+      <ArrowUpRightIcon className="h-3 w-3 text-chalk/40" />
     </a>
   );
 }
@@ -930,10 +930,10 @@ function FollowUpMenu({ company }: { company: CompanyOutreach }) {
         title="Copy a follow-up touch (step 2 nudge / step 3 final)"
         className={clsx(
           "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all duration-200",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
           copiedStep
             ? "border-green-600 bg-green-600 text-white"
-            : "border-line bg-ink/[0.05] text-ink/70 hover:border-ink/25 hover:bg-ink/[0.1] hover:text-ink"
+            : "border-line bg-chalk/[0.05] text-chalk/70 hover:border-chalk/25 hover:bg-chalk/[0.1] hover:text-chalk"
         )}
       >
         {copiedStep ? (
@@ -942,7 +942,7 @@ function FollowUpMenu({ company }: { company: CompanyOutreach }) {
           <CopyIcon className="h-3.5 w-3.5" />
         )}
         Copy follow-up
-        <ChevronDownIcon className="h-3 w-3 text-ink/45" />
+        <ChevronDownIcon className="h-3 w-3 text-chalk/45" />
       </button>
 
       {open && (
@@ -950,17 +950,17 @@ function FollowUpMenu({ company }: { company: CompanyOutreach }) {
           role="menu"
           className={clsx(
             "absolute right-0 top-full z-20 mt-1.5 min-w-[14rem] overflow-hidden rounded-xl border border-line p-1",
-            "bg-white"
+            "bg-[#221838]"
           )}
         >
           <button
             type="button"
             role="menuitem"
             onClick={() => copyStep(2)}
-            className="flex w-full flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left text-xs text-ink/80 transition-colors hover:bg-ink/[0.08] focus-visible:outline-none focus-visible:bg-ink/[0.08]"
+            className="flex w-full flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left text-xs text-chalk/80 transition-colors hover:bg-chalk/[0.08] focus-visible:outline-none focus-visible:bg-chalk/[0.08]"
           >
-            <span className="font-medium text-ink">Touch 2 · nudge</span>
-            <span className="text-[11px] text-ink/45">
+            <span className="font-medium text-chalk">Touch 2 · nudge</span>
+            <span className="text-[11px] text-chalk/45">
               Short reminder · send ~4 days after the first email
             </span>
           </button>
@@ -968,10 +968,10 @@ function FollowUpMenu({ company }: { company: CompanyOutreach }) {
             type="button"
             role="menuitem"
             onClick={() => copyStep(3)}
-            className="flex w-full flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left text-xs text-ink/80 transition-colors hover:bg-ink/[0.08] focus-visible:outline-none focus-visible:bg-ink/[0.08]"
+            className="flex w-full flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left text-xs text-chalk/80 transition-colors hover:bg-chalk/[0.08] focus-visible:outline-none focus-visible:bg-chalk/[0.08]"
           >
-            <span className="font-medium text-ink">Touch 3 · final</span>
-            <span className="text-[11px] text-ink/45">
+            <span className="font-medium text-chalk">Touch 3 · final</span>
+            <span className="text-[11px] text-chalk/45">
               Brief final follow-up · send ~7 days after the first email
             </span>
           </button>
@@ -996,7 +996,7 @@ function OutreachRow({
 }) {
   const repDiscipline = company.disciplines[0] ?? "stratops";
   return (
-    <tr className="border-b border-ink/[0.06] align-top last:border-b-0 hover:bg-ink/[0.03]">
+    <tr className="border-b border-chalk/[0.06] align-top last:border-b-0 hover:bg-chalk/[0.03]">
       {/* company */}
       <td className="px-4 py-4">
         <div className="flex items-start gap-3">
@@ -1010,19 +1010,19 @@ function OutreachRow({
             <div className="flex items-center gap-1.5">
               <Link
                 href={`/companies/${company.slug}`}
-                className="truncate font-semibold text-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
+                className="truncate font-semibold text-chalk hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40"
               >
                 {company.name}
               </Link>
               {company.isTop && <TopBadge name={company.name} />}
             </div>
-            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink/55">
+            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-chalk/55">
               <DisciplineDots company={company} />
               <span>{company.city}</span>
               <StatusBadge company={company} />
             </div>
             {company.domainVerified && company.domain && (
-              <p className="mt-0.5 truncate text-xs text-ink/40">
+              <p className="mt-0.5 truncate text-xs text-chalk/40">
                 {company.domain}
               </p>
             )}
@@ -1032,7 +1032,7 @@ function OutreachRow({
 
       {/* roles */}
       <td className="px-3 py-4 text-center">
-        <span className="font-semibold tabular-nums text-ink">
+        <span className="font-semibold tabular-nums text-chalk">
           {company.openRoles}
         </span>
       </td>
@@ -1078,7 +1078,7 @@ function OutreachCard({
 }) {
   const repDiscipline = company.disciplines[0] ?? "stratops";
   return (
-    <div className="dod-glass rounded-2xl p-4">
+    <div className="pb-glass rounded-2xl p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
           <CompanyAvatar
@@ -1091,13 +1091,13 @@ function OutreachCard({
             <div className="flex items-center gap-1.5">
               <Link
                 href={`/companies/${company.slug}`}
-                className="font-semibold text-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
+                className="font-semibold text-chalk hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40"
               >
                 {company.name}
               </Link>
               {company.isTop && <TopBadge name={company.name} />}
             </div>
-            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink/55">
+            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-chalk/55">
               <DisciplineDots company={company} />
               <span>{company.city}</span>
               <span className="tabular-nums">
@@ -1111,7 +1111,7 @@ function OutreachCard({
         <ScorePill score={company.score} reasons={company.scoreReasons} />
       </div>
 
-      <div className="mt-3 space-y-2.5 border-t border-ink/[0.06] pt-3">
+      <div className="mt-3 space-y-2.5 border-t border-chalk/[0.06] pt-3">
         <ContactCell company={company} />
         <LinksCell company={company} />
         <OutreachActions company={company} />

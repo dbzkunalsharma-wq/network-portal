@@ -788,7 +788,13 @@ export function fitScore(job: Job, now: number = Date.now()): Fit {
   if (withinDays(job, 7, now)) { score += 4; reasons.push("Posted this week"); }
   else if (withinDays(job, 14, now)) { score += 2; }
 
-  if (hasSalary(job)) { score += 2; reasons.push("Pay disclosed"); }
+  if (hasSalary(job)) {
+    if (/\/\s*hr|per hour|an hour|hourly/i.test(job.salary ?? "")) {
+      score -= 20; flags.push("Hourly pay (likely not a manager role)");
+    } else {
+      score += 2; reasons.push("Pay disclosed");
+    }
+  }
 
   score = Math.max(0, Math.min(100, Math.round(score)));
   return { score, reasons, flags };

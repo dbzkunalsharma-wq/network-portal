@@ -71,8 +71,8 @@ export function CompanyAvatar({
     <span
       className={clsx(
         // discipline-tinted flat circle — also the initials backdrop
-        "dod-avatar relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full",
-        "bg-ink/[0.06] font-semibold text-ink/90 ring-1 ring-inset ring-ink/15",
+        "pb-avatar relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full",
+        "bg-chalk/[0.06] font-semibold text-chalk/90 ring-1 ring-inset ring-chalk/15",
         meta.avatarTint,
         dims,
         className

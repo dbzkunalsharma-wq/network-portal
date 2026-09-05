@@ -44,7 +44,7 @@ function metaDescription(job: Job): string {
   }
   const where = job.location ? ` in ${job.location}` : "";
   const who = job.company ? ` at ${job.company}` : "";
-  return `${job.title}${who}${where}. Apply now via DOD US — live US Strategy & Ops jobs.`;
+  return `${job.title}${who}${where}. Apply now via Network Portal — live US Strategy & Ops jobs.`;
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
@@ -70,14 +70,14 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     alternates: { canonical },
     openGraph: {
       type: "article",
-      title: `${title} · DOD US`,
+      title: `${title} · Network Portal`,
       description,
       url: canonical,
-      siteName: "DOD US",
+      siteName: "Network Portal",
       locale: "en_US",
       images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
     },
-    twitter: { card: "summary_large_image", title: `${title} · DOD US`, description, images: [ogImage] },
+    twitter: { card: "summary_large_image", title: `${title} · Network Portal`, description, images: [ogImage] },
   };
 }
 
@@ -99,13 +99,13 @@ export default async function JobPage({ params }: { params: Promise<Params> }) {
       <div className="mx-auto w-full max-w-3xl px-4 pb-24 pt-8 sm:px-6 sm:pt-12 lg:px-8">
         <Link
           href="/"
-          className="group inline-flex items-center gap-1.5 text-sm font-medium text-ink/55 transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:rounded"
+          className="group inline-flex items-center gap-1.5 text-sm font-medium text-chalk/55 transition-colors hover:text-chalk focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40 focus-visible:rounded"
         >
           <span aria-hidden="true" className="transition-transform duration-200 group-hover:-translate-x-0.5">←</span>
           Back to all roles
         </Link>
 
-        <article className="dod-glass relative mt-5 overflow-hidden rounded-3xl p-6 sm:p-8">
+        <article className="pb-glass relative mt-5 overflow-hidden rounded-3xl p-6 sm:p-8">
           <span aria-hidden="true" className={clsx("pointer-events-none absolute inset-x-0 top-0 h-[3px]", topName ? "bg-amber-400" : meta.topLine)} />
 
           <div className="flex items-start gap-4">
@@ -118,26 +118,26 @@ export default async function JobPage({ params }: { params: Promise<Params> }) {
                 <SpecializationTag specialization={spec} className="px-2.5 py-1 text-xs" />
                 <SponsorBadge sponsorship={sponsorshipOf(job)} verbose />
               </div>
-              <h1 className="mt-2 text-balance text-2xl font-semibold leading-snug tracking-tight text-ink sm:text-3xl">{job.title}</h1>
-              {job.company && <p className="mt-1 text-base font-medium text-ink/75">{job.company}</p>}
+              <h1 className="mt-2 text-balance text-2xl font-semibold leading-snug tracking-tight text-chalk sm:text-3xl">{job.title}</h1>
+              {job.company && <p className="mt-1 text-base font-medium text-chalk/75">{job.company}</p>}
             </div>
           </div>
 
-          <div className="mt-5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-ink/60">
+          <div className="mt-5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-chalk/60">
             {job.location && (
               <>
                 <span className="inline-flex items-center gap-1">
-                  <PinIcon className="h-4 w-4 text-ink/45" />
+                  <PinIcon className="h-4 w-4 text-chalk/45" />
                   {job.location}
                 </span>
-                <span className="text-ink/25" aria-hidden="true">·</span>
+                <span className="text-chalk/25" aria-hidden="true">·</span>
               </>
             )}
             <span>{modeLabel}</span>
-            <span className="text-ink/25" aria-hidden="true">·</span>
+            <span className="text-chalk/25" aria-hidden="true">·</span>
             <span>{sourceLabel(job.source)}</span>
-            <span className="text-ink/25" aria-hidden="true">·</span>
-            <span className="text-ink/45">{postedAgo(job)}</span>
+            <span className="text-chalk/25" aria-hidden="true">·</span>
+            <span className="text-chalk/45">{postedAgo(job)}</span>
           </div>
 
           {salary && (
@@ -148,11 +148,11 @@ export default async function JobPage({ params }: { params: Promise<Params> }) {
 
           <FitPanel job={job} className="mt-6" />
 
-          <div className="mt-6 border-t border-ink/10 pt-6">
+          <div className="mt-6 border-t border-chalk/10 pt-6">
             {description ? (
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-ink/75 sm:text-base">{description}</p>
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-chalk/75 sm:text-base">{description}</p>
             ) : (
-              <p className="text-sm italic text-ink/45">No description was provided for this role. Open the original posting for full details.</p>
+              <p className="text-sm italic text-chalk/45">No description was provided for this role. Open the original posting for full details.</p>
             )}
           </div>
 
@@ -161,7 +161,7 @@ export default async function JobPage({ params }: { params: Promise<Params> }) {
               href={job.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/50 focus-visible:ring-offset-2 focus-visible:ring-offset-chalk sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-brand hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink sm:w-auto"
               aria-label={`Apply to ${job.title}${job.company ? ` at ${job.company}` : ""} (opens in a new tab)`}
             >
               Apply on {sourceLabel(job.source)}

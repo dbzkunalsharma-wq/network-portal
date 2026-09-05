@@ -106,11 +106,11 @@ export function SaveButton({
       title={saved ? "Saved" : "Save"}
       className={clsx(
         "inline-flex shrink-0 items-center justify-center rounded-full border transition-all duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/50 focus-visible:ring-offset-2 focus-visible:ring-offset-chalk",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink",
         dims,
         saved
-          ? "border-turbo bg-turbo text-ink"
-          : "border-line bg-ink/[0.05] text-ink/55 hover:border-ink/30 hover:bg-ink/[0.1] hover:text-ink",
+          ? "border-turbo bg-turbo text-chalk"
+          : "border-line bg-chalk/[0.05] text-chalk/55 hover:border-chalk/30 hover:bg-chalk/[0.1] hover:text-chalk",
         className
       )}
     >
@@ -139,7 +139,7 @@ export function StatusSelector({
       role="group"
       aria-label={`Set status${label ? ` for ${label}` : ""}`}
       className={clsx(
-        "inline-flex flex-wrap items-center gap-1 rounded-full border border-line bg-ink/[0.04] p-1",
+        "inline-flex flex-wrap items-center gap-1 rounded-full border border-line bg-chalk/[0.04] p-1",
         className
       )}
     >
@@ -157,8 +157,8 @@ export function StatusSelector({
             aria-pressed={active}
             className={clsx(
               "rounded-full px-2.5 py-1 text-xs font-medium transition-all duration-200",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
-              active ? clsx(v.chip, "ring-1 ring-inset") : "text-ink/50 hover:bg-ink/[0.08] hover:text-ink"
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
+              active ? clsx(v.chip, "ring-1 ring-inset") : "text-chalk/50 hover:bg-chalk/[0.08] hover:text-chalk"
             )}
           >
             {STATUS_LABELS[s]}
@@ -183,7 +183,7 @@ export function NewBadge({ className }: { className?: string }) {
       )}
     >
       <span className="relative flex h-1.5 w-1.5">
-        <span className="dod-live-dot absolute inline-flex h-full w-full rounded-full bg-emerald-300" />
+        <span className="pb-live-dot absolute inline-flex h-full w-full rounded-full bg-emerald-300" />
         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
       </span>
       New
@@ -199,7 +199,7 @@ export function TopBadge({ name, className }: { name?: string | null; className?
   return (
     <span
       className={clsx(
-        "dod-top-badge inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+        "pb-top-badge inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
         className
       )}
       title={name ? `${name} — top company` : "Top company"}
@@ -238,7 +238,7 @@ const FIT_VISUALS: Record<ReturnType<typeof fitTier>, string> = {
   strong: "bg-emerald-100 text-emerald-700 ring-emerald-300",
   good: "bg-sky-100 text-sky-700 ring-sky-300",
   possible: "bg-amber-100 text-amber-700 ring-amber-300",
-  weak: "bg-ink/[0.06] text-ink/55 ring-ink/15",
+  weak: "bg-chalk/[0.06] text-chalk/55 ring-chalk/15",
 };
 
 export function FitBadge({
@@ -314,11 +314,11 @@ export function LevelChip({ level, className }: { level: Level; className?: stri
     <span
       title={LEVEL_LABELS[level]}
       className={clsx(
-        "inline-flex items-center gap-1 rounded-full border border-line bg-ink/[0.05] px-2 py-0.5 text-[11px] font-medium text-ink/60",
+        "inline-flex items-center gap-1 rounded-full border border-line bg-chalk/[0.05] px-2 py-0.5 text-[11px] font-medium text-chalk/60",
         className
       )}
     >
-      <BriefcaseIcon className="h-3 w-3 text-ink/45" />
+      <BriefcaseIcon className="h-3 w-3 text-chalk/45" />
       {short}
     </span>
   );

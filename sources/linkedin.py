@@ -14,7 +14,7 @@ import time
 import httpx
 from bs4 import BeautifulSoup
 
-log = logging.getLogger("dod")
+log = logging.getLogger("netportal")
 
 _BASE = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
 _UA = {

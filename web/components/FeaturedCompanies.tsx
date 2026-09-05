@@ -39,11 +39,11 @@ export function FeaturedCompanies({
   return (
     <section
       aria-label="Featured companies hiring"
-      className="dod-glass mt-5 rounded-2xl p-3 sm:p-4"
+      className="pb-glass mt-5 rounded-2xl p-3 sm:p-4"
     >
       <div className="mb-2.5 flex items-center gap-1.5">
         <StarIcon className="h-3.5 w-3.5 text-amber-700" aria-hidden="true" />
-        <span className="text-xs font-medium uppercase tracking-wide text-ink/45">
+        <span className="text-xs font-medium uppercase tracking-wide text-chalk/45">
           Featured companies hiring
         </span>
       </div>
@@ -65,9 +65,9 @@ export function FeaturedCompanies({
               }`}
               className={clsx(
                 "group inline-flex items-center gap-2.5 rounded-xl border px-2.5 py-2 text-left transition-all duration-200",
-                "border-turbo bg-[#FFFBCC]",
+                "border-turbo bg-[#3A2F5C]",
                 "hover:bg-turbo",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-turbo focus-visible:ring-offset-2 focus-visible:ring-offset-chalk"
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-turbo focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
               )}
             >
               <CompanyAvatar
@@ -77,10 +77,10 @@ export function FeaturedCompanies({
                 size="sm"
               />
               <span className="flex flex-col">
-                <span className="whitespace-nowrap text-sm font-semibold text-ink">
+                <span className="whitespace-nowrap text-sm font-semibold text-chalk">
                   {c.name}
                 </span>
-                <span className="text-xs tabular-nums text-ink/55">
+                <span className="text-xs tabular-nums text-chalk/55">
                   {c.count} {c.count === 1 ? "role" : "roles"}
                 </span>
               </span>

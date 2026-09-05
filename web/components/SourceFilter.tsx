@@ -28,7 +28,7 @@ export function SourceFilter({
       role="group"
       aria-label="Filter by source"
     >
-      <span className="mr-0.5 text-xs font-medium uppercase tracking-wide text-ink/40">
+      <span className="mr-0.5 text-xs font-medium uppercase tracking-wide text-chalk/40">
         Source
       </span>
 
@@ -38,10 +38,10 @@ export function SourceFilter({
         aria-pressed={allActive}
         className={clsx(
           "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-200",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
           allActive
-            ? "border-ink bg-ink text-white"
-            : "border-line bg-ink/[0.04] text-ink/55 hover:border-ink/25 hover:bg-ink/[0.08] hover:text-ink"
+            ? "border-chalk bg-chalk text-ink"
+            : "border-line bg-chalk/[0.04] text-chalk/55 hover:border-chalk/25 hover:bg-chalk/[0.08] hover:text-chalk"
         )}
       >
         All
@@ -57,17 +57,17 @@ export function SourceFilter({
             aria-pressed={active}
             className={clsx(
               "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-200",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
               active
                 ? "border-brand bg-brand text-white"
-                : "border-line bg-ink/[0.04] text-ink/55 hover:border-ink/25 hover:bg-ink/[0.08] hover:text-ink"
+                : "border-line bg-chalk/[0.04] text-chalk/55 hover:border-chalk/25 hover:bg-chalk/[0.08] hover:text-chalk"
             )}
           >
             {sourceLabel(src)}
             <span
               className={clsx(
                 "tabular-nums",
-                active ? "text-ink/70" : "text-ink/35"
+                active ? "text-chalk/70" : "text-chalk/35"
               )}
             >
               {counts[src] ?? 0}

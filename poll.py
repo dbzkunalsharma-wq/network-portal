@@ -21,7 +21,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
 )
-log = logging.getLogger("dod.poll")
+log = logging.getLogger("netportal.poll")
 
 SOURCES = (ats, linkedin, simplyhired, amazon, google, builtin, remoteok)
 

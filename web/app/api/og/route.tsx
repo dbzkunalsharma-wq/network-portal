@@ -4,7 +4,7 @@ import { SITE_HOST } from "@/lib/site";
 
 /**
  * Dynamic OG share-card route — a single query-driven endpoint rendering a
- * 1200×630 flat card in the DOD US palette (Electric Violet / Turbo / Haiti /
+ * 1200×630 flat card in the Network Portal palette (Electric Violet / Turbo / Haiti /
  * Blue Chalk). No gradients, no blur: solid blocks and big type. Wrapped in
  * try/catch so a broken param can never 500 a link unfurl.
  */
@@ -34,15 +34,11 @@ function clamp(value: string | null, max: number): string {
 
 function Mark() {
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 64, height: 64, borderRadius: 16, background: INK }}>
-      <div style={{ display: "flex", alignItems: "center", width: 40, height: 40, position: "relative" }}>
-        <div style={{ display: "flex", width: 11, height: 30, border: `3px solid ${CHALK}` }} />
-        <div style={{ display: "flex", width: 4, height: 30, marginLeft: 3, background: CHALK }} />
-        <div style={{ display: "flex", position: "absolute", top: 0, right: 0, width: 14, height: 14, borderRadius: 9999, background: TURBO }} />
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-end", position: "absolute", bottom: 0, right: 0, width: 16, height: 16, border: `3px solid ${CHALK}` }}>
-          <div style={{ display: "flex", width: 7, height: 7, background: CHALK }} />
-        </div>
-      </div>
+    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "center", width: 64, height: 64, borderRadius: 16, background: INK, position: "relative" }}>
+      <div style={{ display: "flex", position: "absolute", left: 16, top: 14, width: 32, height: 36, borderRadius: 5, background: CHALK }} />
+      <div style={{ display: "flex", position: "absolute", left: 22, top: 24, width: 18, height: 3, borderRadius: 2, background: INK }} />
+      <div style={{ display: "flex", position: "absolute", left: 22, top: 32, width: 13, height: 3, borderRadius: 2, background: INK }} />
+      <div style={{ display: "flex", position: "absolute", right: 12, top: 10, width: 12, height: 12, borderRadius: 9999, background: TURBO }} />
     </div>
   );
 }
@@ -65,7 +61,7 @@ export async function GET(req: NextRequest) {
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: 360, height: "100%", background: accent.bg, padding: 56 }}>
             <Mark />
             <div style={{ display: "flex", flexDirection: "column", color: accent.fg }}>
-              <div style={{ display: "flex", fontSize: 26, fontWeight: 700, letterSpacing: 4 }}>DOD US</div>
+              <div style={{ display: "flex", fontSize: 26, fontWeight: 700, letterSpacing: 1 }}>Network Portal</div>
               <div style={{ display: "flex", marginTop: 8, fontSize: 22, opacity: 0.85 }}>{tag}</div>
             </div>
           </div>
@@ -95,7 +91,7 @@ export async function GET(req: NextRequest) {
     return new ImageResponse(
       (
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", width: "100%", height: "100%", background: VIOLET, padding: 80, fontFamily: "sans-serif", color: "#fff" }}>
-          <div style={{ display: "flex", fontSize: 30, fontWeight: 700, letterSpacing: 6 }}>DOD US</div>
+          <div style={{ display: "flex", fontSize: 30, fontWeight: 700, letterSpacing: 6 }}>Network Portal</div>
           <div style={{ display: "flex", marginTop: 24, fontSize: 68, fontWeight: 700, letterSpacing: -1.5 }}>Live US Strategy & Ops jobs</div>
           <div style={{ display: "flex", marginTop: 24, fontSize: 26, opacity: 0.8 }}>{SITE_HOST}</div>
         </div>

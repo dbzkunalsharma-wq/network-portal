@@ -52,14 +52,14 @@ export function LoadMore({
       <button
         type="button"
         onClick={onMore}
-        className="rounded-xl border border-ink/10 bg-ink/[0.06] px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:border-ink/25 hover:bg-ink/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
+        className="rounded-xl border border-chalk/10 bg-chalk/[0.06] px-5 py-2.5 text-sm font-medium text-chalk transition-colors hover:border-chalk/25 hover:bg-chalk/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40"
       >
         Load more
-        <span className="ml-1.5 tabular-nums text-ink/50">
+        <span className="ml-1.5 tabular-nums text-chalk/50">
           {remaining.toLocaleString("en-US")} left
         </span>
       </button>
-      <p className="text-xs text-ink/35" aria-live="polite">
+      <p className="text-xs text-chalk/35" aria-live="polite">
         {loadedLabel}
       </p>
       {/* the actual intersection target — invisible, below the button */}

@@ -1,17 +1,17 @@
 export function SkeletonCard() {
   return (
     <div
-      className="dod-glass dod-shimmer flex flex-col rounded-2xl p-5"
+      className="pb-glass pb-shimmer flex flex-col rounded-2xl p-5"
       aria-hidden="true"
     >
       <div className="flex items-center justify-between">
-        <div className="h-5 w-24 rounded-full bg-ink/10" />
-        <div className="h-3 w-10 rounded bg-ink/10" />
+        <div className="h-5 w-24 rounded-full bg-chalk/10" />
+        <div className="h-3 w-10 rounded bg-chalk/10" />
       </div>
-      <div className="mt-4 h-5 w-3/4 rounded bg-ink/10" />
-      <div className="mt-2 h-4 w-1/2 rounded bg-ink/[0.07]" />
-      <div className="mt-4 h-3 w-2/3 rounded bg-ink/[0.07]" />
-      <div className="mt-6 h-10 w-full rounded-xl bg-ink/[0.07]" />
+      <div className="mt-4 h-5 w-3/4 rounded bg-chalk/10" />
+      <div className="mt-2 h-4 w-1/2 rounded bg-chalk/[0.07]" />
+      <div className="mt-4 h-3 w-2/3 rounded bg-chalk/[0.07]" />
+      <div className="mt-6 h-10 w-full rounded-xl bg-chalk/[0.07]" />
     </div>
   );
 }

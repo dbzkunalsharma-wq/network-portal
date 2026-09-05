@@ -5,11 +5,11 @@ import { EMPTY_PROFILE, type Profile } from "./jobs";
 
 /**
  * The job-seeker's own details (name, one-line headline, LinkedIn URL), kept in
- * localStorage under `dodus:profile` and fed into every outreach template so
+ * localStorage under `netportal:profile` and fed into every outreach template so
  * copy-paste notes come out personalised. Never leaves the browser.
  */
 
-const STORAGE_KEY = "dodus:profile";
+const STORAGE_KEY = "netportal:profile";
 
 let cache: Profile = EMPTY_PROFILE;
 let initialised = false;

@@ -14,7 +14,7 @@ from datetime import datetime
 import httpx
 from bs4 import BeautifulSoup
 
-log = logging.getLogger("dod")
+log = logging.getLogger("netportal")
 
 _API = "https://www.amazon.jobs/en/search.json"
 _UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "

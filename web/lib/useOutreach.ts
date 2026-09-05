@@ -6,7 +6,7 @@ import { useCallback, useSyncExternalStore } from "react";
  * Outreach status tracking, persisted to localStorage (no backend).
  *
  * Mirrors `lib/useTracker.ts`: a single JSON map keyed by company `slug` lives
- * under `dod:outreach`, components subscribe via `useSyncExternalStore` (so any
+ * under `netportal:outreach`, components subscribe via `useSyncExternalStore` (so any
  * status change re-renders every consumer in sync, and across tabs via the
  * `storage` event), and the server snapshot is the frozen empty map so
  * hydration never warns.
@@ -25,7 +25,7 @@ export type OutreachStatus =
 
 export type OutreachMap = Record<string, Exclude<OutreachStatus, "none">>;
 
-const STORAGE_KEY = "dod:outreach";
+const STORAGE_KEY = "netportal:outreach";
 const EMPTY: OutreachMap = Object.freeze({});
 
 /** Pipeline order for the segmented selector + the status filter. */

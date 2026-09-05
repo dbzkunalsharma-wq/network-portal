@@ -26,7 +26,7 @@ export async function GET(): Promise<Response> {
   return new Response(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="dod-us-network.csv"',
+      "Content-Disposition": 'attachment; filename="network-portal-contacts.csv"',
       "X-Robots-Tag": "noindex, nofollow",
     },
   });

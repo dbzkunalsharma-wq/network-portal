@@ -48,21 +48,21 @@ export function StatsStrip({ jobs }: { jobs: Job[] }) {
   return (
     <Link
       href="/insights"
-      className="dod-glass group mt-4 flex items-center justify-between gap-3 rounded-full px-4 py-2.5 transition-colors duration-200 hover:bg-ink/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
+      className="pb-glass group mt-4 flex items-center justify-between gap-3 rounded-full px-4 py-2.5 transition-colors duration-200 hover:bg-chalk/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40"
       aria-label="View hiring insights"
     >
-      <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-ink/60 sm:text-sm">
-        <span className="font-semibold tabular-nums text-ink">{total.toLocaleString("en-US")}</span> roles
-        <span className="text-ink/25" aria-hidden="true">·</span>
-        <span className="font-semibold tabular-nums text-ink">{companies.toLocaleString("en-US")}</span> companies
-        <span className="text-ink/25" aria-hidden="true">·</span>
+      <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-chalk/60 sm:text-sm">
+        <span className="font-semibold tabular-nums text-chalk">{total.toLocaleString("en-US")}</span> roles
+        <span className="text-chalk/25" aria-hidden="true">·</span>
+        <span className="font-semibold tabular-nums text-chalk">{companies.toLocaleString("en-US")}</span> companies
+        <span className="text-chalk/25" aria-hidden="true">·</span>
         <span className="font-semibold tabular-nums text-emerald-700">{strong.toLocaleString("en-US")}</span> strong fits
-        <span className="text-ink/25" aria-hidden="true">·</span>
-        <span className="font-semibold tabular-nums text-ink">{austinRemote.toLocaleString("en-US")}</span> Austin or remote
-        <span className="text-ink/25" aria-hidden="true">·</span>
-        <span className="font-semibold tabular-nums text-ink">{newThisWeek === null ? "—" : newThisWeek.toLocaleString("en-US")}</span> new this week
+        <span className="text-chalk/25" aria-hidden="true">·</span>
+        <span className="font-semibold tabular-nums text-chalk">{austinRemote.toLocaleString("en-US")}</span> Austin or remote
+        <span className="text-chalk/25" aria-hidden="true">·</span>
+        <span className="font-semibold tabular-nums text-chalk">{newThisWeek === null ? "—" : newThisWeek.toLocaleString("en-US")}</span> new this week
       </span>
-      <span className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-ink/55 transition-colors group-hover:text-ink">
+      <span className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-chalk/55 transition-colors group-hover:text-chalk">
         Insights
         <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
       </span>

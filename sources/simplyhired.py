@@ -18,7 +18,7 @@ from bs4 import BeautifulSoup
 
 import classify
 
-log = logging.getLogger("dod")
+log = logging.getLogger("netportal")
 
 _BASE = "https://www.simplyhired.com"
 _UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "

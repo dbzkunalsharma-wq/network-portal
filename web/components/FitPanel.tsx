@@ -19,34 +19,34 @@ export function FitPanel({ job, className }: { job: Job; className?: string }) {
   return (
     <section
       aria-label="Why this role fits"
-      className={clsx("rounded-2xl border border-line bg-ink/[0.04] p-4", className)}
+      className={clsx("rounded-2xl border border-line bg-chalk/[0.04] p-4", className)}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <TargetIcon className="h-4 w-4 text-emerald-700" />
-          <h3 className="text-sm font-semibold text-ink">Why this fits</h3>
+          <h3 className="text-sm font-semibold text-chalk">Why this fits</h3>
         </div>
         <FitBadge score={fit.score} size="lg" showLabel />
       </div>
 
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-wide text-ink/40">For</p>
+          <p className="text-[11px] font-medium uppercase tracking-wide text-chalk/40">For</p>
           {fit.reasons.length > 0 ? (
             <ul className="mt-1.5 flex flex-col gap-1">
               {fit.reasons.map((r) => (
-                <li key={r} className="flex items-start gap-1.5 text-xs text-ink/75">
+                <li key={r} className="flex items-start gap-1.5 text-xs text-chalk/75">
                   <CheckIcon className="mt-0.5 h-3 w-3 shrink-0 text-emerald-700" />
                   {r}
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="mt-1.5 text-xs text-ink/45">Nothing specific stood out.</p>
+            <p className="mt-1.5 text-xs text-chalk/45">Nothing specific stood out.</p>
           )}
         </div>
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-wide text-ink/40">Watch out</p>
+          <p className="text-[11px] font-medium uppercase tracking-wide text-chalk/40">Watch out</p>
           {fit.flags.length > 0 ? (
             <ul className="mt-1.5 flex flex-col gap-1">
               {fit.flags.map((f) => (
@@ -57,14 +57,14 @@ export function FitPanel({ job, className }: { job: Job; className?: string }) {
               ))}
             </ul>
           ) : (
-            <p className="mt-1.5 text-xs text-ink/45">No cautions.</p>
+            <p className="mt-1.5 text-xs text-chalk/45">No cautions.</p>
           )}
         </div>
       </div>
 
       {tags.length > 0 && (
-        <div className="mt-3 border-t border-ink/[0.06] pt-3">
-          <p className="text-[11px] font-medium uppercase tracking-wide text-ink/40">
+        <div className="mt-3 border-t border-chalk/[0.06] pt-3">
+          <p className="text-[11px] font-medium uppercase tracking-wide text-chalk/40">
             Resume keywords in this posting
           </p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
@@ -80,7 +80,7 @@ export function FitPanel({ job, className }: { job: Job; className?: string }) {
         </div>
       )}
 
-      <p className="mt-3 text-[11px] leading-relaxed text-ink/40">
+      <p className="mt-3 text-[11px] leading-relaxed text-chalk/40">
         {FIT_TIER_LABELS[tier]}. Scored from the title, level, location, visa wording and the
         keywords in the full posting. Deterministic, no AI.
       </p>

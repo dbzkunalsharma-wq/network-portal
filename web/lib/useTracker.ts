@@ -5,7 +5,7 @@ import { useCallback, useSyncExternalStore } from "react";
 /**
  * Save + pipeline-status tracking, persisted to localStorage (no backend).
  *
- * A single JSON map keyed by `job.id` lives under `dodus:tracker`. Components
+ * A single JSON map keyed by `job.id` lives under `netportal:tracker`. Components
  * subscribe via `useSyncExternalStore`, so any change re-renders every consumer
  * in sync, and across browser tabs via the `storage` event. SSR-safe.
  */
@@ -25,7 +25,7 @@ export interface TrackedEntry {
 
 export type TrackerMap = Record<string, TrackedEntry>;
 
-const STORAGE_KEY = "dodus:tracker";
+const STORAGE_KEY = "netportal:tracker";
 const EMPTY: TrackerMap = Object.freeze({});
 
 export const STATUS_ORDER: Exclude<JobStatus, "none">[] = [

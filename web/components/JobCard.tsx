@@ -79,11 +79,11 @@ export function JobCard({
         }
       }}
       className={clsx(
-        "dod-rise dod-glass group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl p-5 text-left",
+        "pb-rise pb-glass group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl p-5 text-left",
         "transition-all duration-300 ease-out",
-        "hover:-translate-y-1 hover:bg-ink/[0.09]",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/50 focus-visible:ring-offset-2 focus-visible:ring-offset-chalk",
-        topName ? "dod-top" : meta.hoverGlow
+        "hover:-translate-y-1 hover:bg-chalk/[0.09]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink",
+        topName ? "pb-top" : meta.hoverGlow
       )}
       style={{ animationDelay: `${Math.min(index, 12) * 35}ms` }}
     >
@@ -105,7 +105,7 @@ export function JobCard({
         </div>
       </div>
 
-      <h2 className="mt-3 text-balance text-lg font-semibold leading-snug tracking-tight text-ink">
+      <h2 className="mt-3 text-balance text-lg font-semibold leading-snug tracking-tight text-chalk">
         {job.title}
       </h2>
 
@@ -123,30 +123,30 @@ export function JobCard({
             <Link
               href={`/companies/${cSlug}`}
               onClick={(e) => e.stopPropagation()}
-              className="mt-2 inline-block text-sm font-medium text-ink/70 underline-offset-2 transition-colors hover:text-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:rounded"
+              className="mt-2 inline-block text-sm font-medium text-chalk/70 underline-offset-2 transition-colors hover:text-chalk hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40 focus-visible:rounded"
             >
               {job.company}
             </Link>
           ) : (
-            <p className="mt-2 text-sm font-medium text-ink/70">{job.company}</p>
+            <p className="mt-2 text-sm font-medium text-chalk/70">{job.company}</p>
           );
         })()}
 
-      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink/55">
+      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-chalk/55">
         {job.location && (
           <>
             <span className="inline-flex items-center gap-1">
-              <PinIcon className="h-3.5 w-3.5 text-ink/40" />
+              <PinIcon className="h-3.5 w-3.5 text-chalk/40" />
               <span className="line-clamp-1">{job.location}</span>
             </span>
-            <span className="text-ink/30" aria-hidden="true">·</span>
+            <span className="text-chalk/30" aria-hidden="true">·</span>
           </>
         )}
         <span>{modeLabel}</span>
-        <span className="text-ink/30" aria-hidden="true">·</span>
-        <span className="text-ink/55">{sourceLabel(job.source)}</span>
-        <span className="text-ink/30" aria-hidden="true">·</span>
-        <span className="text-ink/45">{postedAgo(job)}</span>
+        <span className="text-chalk/30" aria-hidden="true">·</span>
+        <span className="text-chalk/55">{sourceLabel(job.source)}</span>
+        <span className="text-chalk/30" aria-hidden="true">·</span>
+        <span className="text-chalk/45">{postedAgo(job)}</span>
       </div>
 
       {salary && (
@@ -156,26 +156,26 @@ export function JobCard({
       )}
 
       {fit.reasons.length > 0 && (
-        <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-ink/50">
-          <span className="text-ink/70">Why:</span> {fit.reasons.slice(0, 3).join(" · ")}
+        <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-chalk/50">
+          <span className="text-chalk/70">Why:</span> {fit.reasons.slice(0, 3).join(" · ")}
         </p>
       )}
 
       {job.contact && (
-        <div className="mt-3 inline-flex items-center gap-1.5 text-xs text-ink/55">
-          <MailIcon className="h-3.5 w-3.5 text-ink/40" />
+        <div className="mt-3 inline-flex items-center gap-1.5 text-xs text-chalk/55">
+          <MailIcon className="h-3.5 w-3.5 text-chalk/40" />
           {cHref ? (
             <a
               href={cHref}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className={clsx("underline decoration-dotted underline-offset-2 transition-colors hover:text-ink", meta.text)}
+              className={clsx("underline decoration-dotted underline-offset-2 transition-colors hover:text-chalk", meta.text)}
             >
               {job.contact}
             </a>
           ) : (
-            <span className="text-ink/70">{job.contact}</span>
+            <span className="text-chalk/70">{job.contact}</span>
           )}
         </div>
       )}
@@ -192,8 +192,8 @@ export function JobCard({
           onClick={(e) => e.stopPropagation()}
           className={clsx(
             "relative inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-ink px-4 py-2.5 text-sm font-semibold text-white",
-            "transition-colors duration-200 hover:bg-brand",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/50 focus-visible:ring-offset-2 focus-visible:ring-offset-chalk"
+            "transition-colors duration-200 hover:bg-brand hover:text-white",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
           )}
           aria-label={`Apply to ${job.title}${job.company ? ` at ${job.company}` : ""} (opens in a new tab)`}
         >
@@ -204,9 +204,9 @@ export function JobCard({
           href={`/jobs/${jobSlug(job.id)}`}
           onClick={(e) => e.stopPropagation()}
           className={clsx(
-            "inline-flex shrink-0 items-center justify-center gap-1 rounded-xl border border-line bg-ink/[0.04] px-3 py-2.5 text-sm font-medium text-ink/65",
-            "transition-all duration-200 hover:border-ink/25 hover:bg-ink/[0.08] hover:text-ink",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/50 focus-visible:ring-offset-2 focus-visible:ring-offset-chalk"
+            "inline-flex shrink-0 items-center justify-center gap-1 rounded-xl border border-line bg-chalk/[0.04] px-3 py-2.5 text-sm font-medium text-chalk/65",
+            "transition-all duration-200 hover:border-chalk/25 hover:bg-chalk/[0.08] hover:text-chalk",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
           )}
           aria-label={`Open the details page for ${job.title}${job.company ? ` at ${job.company}` : ""}`}
         >

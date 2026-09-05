@@ -60,9 +60,9 @@ function Pill({
 }) {
   const activeTone =
     tone === "amber"
-      ? "border-turbo bg-turbo text-ink"
+      ? "border-turbo bg-turbo text-chalk"
       : tone === "gold"
-        ? "border-turbo bg-turbo text-ink"
+        ? "border-turbo bg-turbo text-chalk"
         : tone === "emerald"
           ? "border-green-600 bg-green-600 text-white"
           : "border-brand bg-brand text-white";
@@ -75,10 +75,10 @@ function Pill({
       title={title}
       className={clsx(
         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
         active
           ? activeTone
-          : "border-line bg-ink/[0.04] text-ink/55 hover:border-ink/25 hover:bg-ink/[0.08] hover:text-ink"
+          : "border-line bg-chalk/[0.04] text-chalk/55 hover:border-chalk/25 hover:bg-chalk/[0.08] hover:text-chalk"
       )}
     >
       {children}
@@ -104,14 +104,14 @@ function CountedPill({
       aria-pressed={active}
       className={clsx(
         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
         active
           ? "border-brand bg-brand text-white"
-          : "border-line bg-ink/[0.04] text-ink/55 hover:border-ink/25 hover:bg-ink/[0.08] hover:text-ink"
+          : "border-line bg-chalk/[0.04] text-chalk/55 hover:border-chalk/25 hover:bg-chalk/[0.08] hover:text-chalk"
       )}
     >
       {label}
-      <span className={clsx("tabular-nums", active ? "text-ink/70" : "text-ink/35")}>{count}</span>
+      <span className={clsx("tabular-nums", active ? "text-chalk/70" : "text-chalk/35")}>{count}</span>
     </button>
   );
 }
@@ -124,10 +124,10 @@ function AllPill({ active, onClick, label = "All" }: { active: boolean; onClick:
       aria-pressed={active}
       className={clsx(
         "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
         active
-          ? "border-ink bg-ink text-white"
-          : "border-line bg-ink/[0.04] text-ink/55 hover:border-ink/25 hover:bg-ink/[0.08] hover:text-ink"
+          ? "border-chalk bg-chalk text-ink"
+          : "border-line bg-chalk/[0.04] text-chalk/55 hover:border-chalk/25 hover:bg-chalk/[0.08] hover:text-chalk"
       )}
     >
       {label}
@@ -137,7 +137,7 @@ function AllPill({ active, onClick, label = "All" }: { active: boolean; onClick:
 
 function RowLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="mr-0.5 text-xs font-medium uppercase tracking-wide text-ink/40">{children}</span>
+    <span className="mr-0.5 text-xs font-medium uppercase tracking-wide text-chalk/40">{children}</span>
   );
 }
 
@@ -184,7 +184,7 @@ export function FilterChips({
       <Pill active={fitOnly} onClick={onFit} tone="emerald" title="Only roles with a fit score of 55 or more">
         <TargetIcon className="h-3.5 w-3.5" />
         Strong fit
-        <span className={clsx("tabular-nums", fitOnly ? "text-ink/80" : "text-ink/40")}>{fitCount}</span>
+        <span className={clsx("tabular-nums", fitOnly ? "text-chalk/80" : "text-chalk/40")}>{fitCount}</span>
       </Pill>
 
       <Pill
@@ -195,7 +195,7 @@ export function FilterChips({
         <ShieldCheckIcon className="h-3.5 w-3.5" />
         Hide no-sponsorship
         {noSponsorCount > 0 && (
-          <span className={clsx("tabular-nums", sponsorOk ? "text-ink/80" : "text-ink/40")}>
+          <span className={clsx("tabular-nums", sponsorOk ? "text-chalk/80" : "text-chalk/40")}>
             −{noSponsorCount}
           </span>
         )}
@@ -209,13 +209,13 @@ export function FilterChips({
       <Pill active={topOnly} onClick={onTop} tone="gold" ariaLabel="Show only roles at top companies">
         <StarIcon className="h-3.5 w-3.5" />
         Top companies
-        <span className={clsx("tabular-nums", topOnly ? "text-amber-700" : "text-ink/40")}>{topCount}</span>
+        <span className={clsx("tabular-nums", topOnly ? "text-amber-700" : "text-chalk/40")}>{topCount}</span>
       </Pill>
 
       <Pill active={savedOnly} onClick={onSaved} tone="amber">
         <BookmarkIcon filled={savedOnly} className="h-3.5 w-3.5" />
         Saved
-        <span className={clsx("tabular-nums", savedOnly ? "text-ink/80" : "text-ink/40")}>{savedCount}</span>
+        <span className={clsx("tabular-nums", savedOnly ? "text-chalk/80" : "text-chalk/40")}>{savedCount}</span>
       </Pill>
     </div>
   );
@@ -328,7 +328,7 @@ export function SpecializationTag({
   return (
     <span
       className={clsx(
-        "inline-flex items-center rounded-full border border-line bg-ink/[0.05] px-2 py-0.5 text-[11px] font-medium text-ink/55",
+        "inline-flex items-center rounded-full border border-line bg-chalk/[0.05] px-2 py-0.5 text-[11px] font-medium text-chalk/55",
         className
       )}
     >
@@ -356,7 +356,7 @@ function GlassSelect({
 }) {
   return (
     <div className="relative inline-flex items-center">
-      <span aria-hidden="true" className="pointer-events-none absolute left-3 text-ink/45">
+      <span aria-hidden="true" className="pointer-events-none absolute left-3 text-chalk/45">
         {icon}
       </span>
       <select
@@ -364,15 +364,15 @@ function GlassSelect({
         onChange={(e) => onChange(e.target.value)}
         aria-label={ariaLabel}
         className={clsx(
-          "appearance-none rounded-full border border-line bg-ink/[0.06] py-1.5 pl-9 pr-8 text-xs font-medium text-ink",
-          " transition-colors duration-200 hover:border-ink/25 hover:bg-ink/[0.1]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
-          "[&>option]:bg-white [&>option]:text-ink"
+          "appearance-none rounded-full border border-line bg-chalk/[0.06] py-1.5 pl-9 pr-8 text-xs font-medium text-chalk",
+          " transition-colors duration-200 hover:border-chalk/25 hover:bg-chalk/[0.1]",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
+          "[&>option]:bg-[#221838] [&>option]:text-chalk"
         )}
       >
         {children}
       </select>
-      <ChevronDownIcon aria-hidden="true" className="pointer-events-none absolute right-3 h-3.5 w-3.5 text-ink/45" />
+      <ChevronDownIcon aria-hidden="true" className="pointer-events-none absolute right-3 h-3.5 w-3.5 text-chalk/45" />
     </div>
   );
 }
@@ -473,12 +473,12 @@ export function StatusFilterChips({ value, onChange }: { value: StatusFilter; on
             aria-pressed={active}
             className={clsx(
               "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-200",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
               active
                 ? v
                   ? clsx(v.chip, "ring-1 ring-inset")
-                  : "border-ink bg-ink text-white"
-                : "border-line bg-ink/[0.04] text-ink/55 hover:border-ink/25 hover:bg-ink/[0.08] hover:text-ink"
+                  : "border-chalk bg-chalk text-ink"
+                : "border-line bg-chalk/[0.04] text-chalk/55 hover:border-chalk/25 hover:bg-chalk/[0.08] hover:text-chalk"
             )}
           >
             {v && <span className={clsx("h-1.5 w-1.5 rounded-full", v.dot)} />}
@@ -507,10 +507,10 @@ export function CopyLinkButton({ queryString }: { queryString: string }) {
       aria-label="Copy a shareable link to this filtered view"
       className={clsx(
         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
         copied
           ? "border-green-600 bg-green-600 text-white"
-          : "border-line bg-ink/[0.04] text-ink/65 hover:border-ink/25 hover:bg-ink/[0.08] hover:text-ink"
+          : "border-line bg-chalk/[0.04] text-chalk/65 hover:border-chalk/25 hover:bg-chalk/[0.08] hover:text-chalk"
       )}
     >
       {copied ? <CheckIcon className="h-3.5 w-3.5" /> : <CopyIcon className="h-3.5 w-3.5" />}
@@ -532,10 +532,10 @@ export function CopyJobLinkButton({ jobId }: { jobId: string }) {
       aria-label="Copy a shareable link to this role"
       className={clsx(
         "inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-3 text-sm font-medium transition-all duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/50 focus-visible:ring-offset-2 focus-visible:ring-offset-chalk",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink",
         copied
           ? "border-green-600 bg-green-600 text-white"
-          : "border-ink/10 bg-ink/[0.06] text-ink/75 hover:border-ink/25 hover:bg-ink/[0.12] hover:text-ink"
+          : "border-chalk/10 bg-chalk/[0.06] text-chalk/75 hover:border-chalk/25 hover:bg-chalk/[0.12] hover:text-chalk"
       )}
     >
       {copied ? <CheckIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
@@ -661,14 +661,14 @@ export function ActiveFilters({
       {chips.map((c) => (
         <span
           key={c.key}
-          className="inline-flex items-center gap-1 rounded-full border border-line bg-ink/[0.06] py-1 pl-2.5 pr-1 text-xs font-medium text-ink/75"
+          className="inline-flex items-center gap-1 rounded-full border border-line bg-chalk/[0.06] py-1 pl-2.5 pr-1 text-xs font-medium text-chalk/75"
         >
           {c.label}
           <button
             type="button"
             onClick={c.onRemove}
             aria-label={`Remove ${c.label} filter`}
-            className="inline-flex h-4 w-4 items-center justify-center rounded-full text-ink/45 transition-colors hover:bg-ink/15 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
+            className="inline-flex h-4 w-4 items-center justify-center rounded-full text-chalk/45 transition-colors hover:bg-chalk/15 hover:text-chalk focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40"
           >
             <CloseIcon className="h-3 w-3" />
           </button>
@@ -677,7 +677,7 @@ export function ActiveFilters({
       <button
         type="button"
         onClick={onClearAll}
-        className="ml-1 rounded-full px-2.5 py-1 text-xs font-medium text-ink/55 underline-offset-2 transition-colors hover:text-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
+        className="ml-1 rounded-full px-2.5 py-1 text-xs font-medium text-chalk/55 underline-offset-2 transition-colors hover:text-chalk hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40"
       >
         Clear all
       </button>

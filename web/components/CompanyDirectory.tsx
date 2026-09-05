@@ -50,12 +50,12 @@ export function CompanyDirectory({
   return (
     <>
       {/* search + sort island */}
-      <div className="dod-glass mt-6 rounded-2xl p-3 sm:p-4">
+      <div className="pb-glass mt-6 rounded-2xl p-3 sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-chalk/40"
             >
               <SearchIcon className="h-4 w-4" />
             </span>
@@ -67,9 +67,9 @@ export function CompanyDirectory({
               placeholder="Search companies…"
               aria-label="Search companies by name"
               className={clsx(
-                "w-full rounded-full border border-line bg-ink/[0.05] py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-ink/40",
-                " transition-colors duration-200 hover:border-ink/20",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
+                "w-full rounded-full border border-line bg-chalk/[0.05] py-2.5 pl-10 pr-4 text-sm text-chalk placeholder:text-chalk/40",
+                " transition-colors duration-200 hover:border-chalk/20",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40"
               )}
             />
           </div>
@@ -79,10 +79,10 @@ export function CompanyDirectory({
               onChange={(e) => setSort(e.target.value as SortMode)}
               aria-label="Sort companies"
               className={clsx(
-                "appearance-none rounded-full border border-line bg-ink/[0.06] py-2.5 pl-4 pr-9 text-sm font-medium text-ink",
-                " transition-colors duration-200 hover:border-ink/25 hover:bg-ink/[0.1]",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40",
-                "[&>option]:bg-white [&>option]:text-ink"
+                "appearance-none rounded-full border border-line bg-chalk/[0.06] py-2.5 pl-4 pr-9 text-sm font-medium text-chalk",
+                " transition-colors duration-200 hover:border-chalk/25 hover:bg-chalk/[0.1]",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/40",
+                "[&>option]:bg-[#221838] [&>option]:text-chalk"
               )}
             >
               <option value="roles">Most roles</option>
@@ -90,7 +90,7 @@ export function CompanyDirectory({
             </select>
             <ChevronDownIcon
               aria-hidden="true"
-              className="pointer-events-none absolute right-3.5 h-3.5 w-3.5 text-ink/45"
+              className="pointer-events-none absolute right-3.5 h-3.5 w-3.5 text-chalk/45"
             />
           </div>
         </div>
@@ -98,7 +98,7 @@ export function CompanyDirectory({
 
       {/* result count */}
       <p
-        className="mt-5 text-sm text-ink/55"
+        className="mt-5 text-sm text-chalk/55"
         aria-live="polite"
         aria-atomic="true"
       >
@@ -109,8 +109,8 @@ export function CompanyDirectory({
 
       {/* grid */}
       {filtered.length === 0 ? (
-        <div className="dod-glass mt-4 rounded-3xl px-6 py-16 text-center">
-          <p className="text-sm text-ink/55">
+        <div className="pb-glass mt-4 rounded-3xl px-6 py-16 text-center">
+          <p className="text-sm text-chalk/55">
             No companies match your search.
           </p>
         </div>
@@ -136,10 +136,10 @@ function CompanyCard({ company }: { company: CompanySummary }) {
     <Link
       href={`/companies/${slug}`}
       className={clsx(
-        "dod-glass group relative flex h-full flex-col overflow-hidden rounded-2xl p-5 transition-all duration-300 ease-out",
-        "hover:-translate-y-1 hover:bg-ink/[0.09]",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/50 focus-visible:ring-offset-2 focus-visible:ring-offset-chalk",
-        isTop && "dod-top"
+        "pb-glass group relative flex h-full flex-col overflow-hidden rounded-2xl p-5 transition-all duration-300 ease-out",
+        "hover:-translate-y-1 hover:bg-chalk/[0.09]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink",
+        isTop && "pb-top"
       )}
       aria-label={`${name} — ${count} ${count === 1 ? "role" : "roles"}`}
     >
@@ -153,11 +153,11 @@ function CompanyCard({ company }: { company: CompanySummary }) {
         {isTop && <TopBadge name={name} />}
       </div>
 
-      <h2 className="mt-3 text-balance text-base font-semibold leading-snug tracking-tight text-ink">
+      <h2 className="mt-3 text-balance text-base font-semibold leading-snug tracking-tight text-chalk">
         {name}
       </h2>
 
-      <p className="mt-1 text-sm tabular-nums text-ink/60">
+      <p className="mt-1 text-sm tabular-nums text-chalk/60">
         {count.toLocaleString("en-US")} {count === 1 ? "role" : "roles"}
       </p>
 
@@ -184,8 +184,8 @@ function CompanyCard({ company }: { company: CompanySummary }) {
       )}
 
       {locationHint && (
-        <div className="mt-auto flex items-center gap-1 pt-3 text-xs text-ink/50">
-          <PinIcon className="h-3.5 w-3.5 text-ink/35" />
+        <div className="mt-auto flex items-center gap-1 pt-3 text-xs text-chalk/50">
+          <PinIcon className="h-3.5 w-3.5 text-chalk/35" />
           <span className="truncate">
             {locationHint}
             {locations.length > 1 ? ` +${locations.length - 1}` : ""}
